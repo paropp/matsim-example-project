@@ -11,7 +11,7 @@
 
 	<properties>
 	  <!-- release> -->
-		<matsim.version>11.0</matsim.version>
+	  <matsim.version>11.0</matsim.version>
 
 	  <!--weekly "release":-->
 	  <!--<matsim.version>0.11.0-2019w01-SNAPSHOT</matsim.version>-->
@@ -35,7 +35,13 @@
 			<id>ojo-snapshots</id>
 			<url>http://oss.jfrog.org/libs-snapshot</url>
 		</repository>	
-	</repositories>
+
+  	<repository>
+  	    <id>jitpack.io</id>
+  	    <url>https://jitpack.io</url>
+  	</repository>
+  </repositories>
+
 
 	<dependencies>
 		<dependency>
@@ -43,6 +49,24 @@
 			<groupId>org.matsim</groupId>
 			<artifactId>matsim</artifactId>
 			<version>${matsim.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.matsim.contrib</groupId>
+			<artifactId>drt</artifactId>
+			<version>${matsim.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.matsim.contrib</groupId>
+			<artifactId>av</artifactId>
+			<version>${matsim.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.github.matsim-org</groupId>
+			<artifactId>GTFS2MATSim</artifactId>
+			<version>-8e93fe00aa-1</version>
 		</dependency>
 
 		<dependency>
@@ -60,6 +84,30 @@
 			<type>test-jar</type>
 			<version>${matsim.version}</version>
 			<scope>test</scope>
+		</dependency>
+		
+		<dependency>
+            <groupId>com.github.SchweizerischeBundesbahnen</groupId>
+            <artifactId>matsim-sbb-extensions</artifactId>
+            <version>0.10.1</version>
+        </dependency>
+
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-csv</artifactId>
+			<version>1.6</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-math3</artifactId>
+			<version>3.6.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.beust</groupId>
+			<artifactId>jcommander</artifactId>
+			<version>1.72</version>
 		</dependency>
 
 		<!--to get ExamplesUtils. commented out since it is another dependency, but in general this is recommended. -->
@@ -109,7 +157,7 @@
 					</descriptorRefs>
 					<archive>
 						<manifest>
-							<mainClass>org.matsim.gui.MATSimGUI</mainClass>
+							<mainClass>org.matsim.run.RunDrtScenario</mainClass>
 						</manifest>
 					</archive>
 				</configuration>

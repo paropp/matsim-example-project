@@ -20,6 +20,8 @@
 package org.matsim.gui;
 
 import org.matsim.project.RunMatsim;
+import org.matsim.project.RunDrtScenario;
+import org.matsim.project.RunMatsimOld;
 import org.matsim.run.gui.Gui;
 
 public class MATSimGUI {

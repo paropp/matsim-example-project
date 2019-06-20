@@ -1,5 +1,5 @@
-/* *********************e************************************************** *
- * project: org.matsim.*w 												   *
+/* *********************************************************************** *
+ * project: org.matsim.*												   *
  *                                                                         *
  * *********************************************************************** *
  *                                                                         *
@@ -21,30 +21,24 @@ package org.matsim.project;
 import org.matsim.api.core.v01.Scenario;
 import org.matsim.core.config.Config;
 import org.matsim.core.config.ConfigUtils;
-import org.matsim.core.controler.AbstractModule;
 import org.matsim.core.controler.Controler;
-import org.matsim.core.controler.OutputDirectoryHierarchy.OverwriteFileSetting;
 import org.matsim.core.gbl.Gbl;
 import org.matsim.core.scenario.ScenarioUtils;
-
-import ch.sbb.matsim.routing.pt.raptor.SwissRailRaptor;
-import ch.sbb.matsim.routing.pt.raptor.SwissRailRaptorModule;
 
 /**
  * @author nagel
  *
  */
-public class RunMatsim {
-
-	//private static final AbstractModule AbstractModule = null;
+public class RunMatsimOld{
 
 	public static void main(String[] args) {
-		Gbl.assertIf(args.length >=1 && args[0]!="" );
-		run(ConfigUtils.loadConfig(args[0]));
-		// makes some sense to not modify the config here but in the run method to help  with regression testing.
-	}
-	
-	static void run(Config config) {
+		if ( args.length==0 ) {
+			args = new String [] { "scenarios/equil/config.xml" } ;
+		} else {
+			Gbl.assertIf( args[0] != null && !args[0].equals( "" ) );
+		}
+
+		Config config = ConfigUtils.loadConfig( args ) ;
 		
 		// possibly modify config here
 		
@@ -59,14 +53,8 @@ public class RunMatsim {
 		Controler controler = new Controler( scenario ) ;
 		
 		// possibly modify controler here
-		controler.addOverridingModule( new AbstractModule() {
-			@Override
-			public void install() {
-				install(new SwissRailRaptorModule());
-			}
-			
-		});
-		
+
+//		controler.addOverridingModule( new OTFVisLiveModule() ) ;
 		
 		// ---
 		
