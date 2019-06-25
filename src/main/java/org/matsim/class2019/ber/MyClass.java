@@ -38,7 +38,53 @@ import org.matsim.vehicles.VehicleType;
 import org.matsim.vehicles.VehicleWriterV1;
 
 public class MyClass {
-
+	
+	private static final String[] nodesTegel = new String[]{
+			"637767071",
+			"150552644",
+			"150552645",
+			"150554455",
+			"150554467",
+			"28205955",
+			"28205956",
+			"28205961",
+			"28205962",
+			"28205964",
+			"28205966",
+			"28205968",
+			"28205972",
+			"28205975",
+			"28205980",
+			"28205998",
+			"28206002",
+			"28206004",
+			"660680951",
+			"660690616",
+			"745108110",
+			"745108242",
+			"pt_070101000378",
+			"pt_070101000726",
+			"135530593",
+			"28206050",
+			"28206056",
+			"28206078",
+			"28206081",
+			"28206082",
+			"28206084",
+			"28246285",
+			"28246286",
+			"428699367",
+			"428699463",
+			"428699464",
+			"428699832",
+			"95056459",
+			"pt_070101000460",
+			"pt_070101000514",
+			"pt_070101000525",
+			"pt_070101000573",
+	} ;
+	private static final String nodeBer = "pt_160000014391" ;
+	
 	private static final String inputPath = "/home/misax/Documents/berlin-v5.3-10pct_BER/input/" ;
 	private static final String outputPath = "/home/misax/Documents/berlin-v5.3-10pct_BER/edits/" ;
 	
@@ -94,7 +140,7 @@ public class MyClass {
 
 		// get the existing nodes we want to connect
 		Node sxf = scenario.getNetwork().getNodes().get( Id.createNodeId( "pt_060260005671" ) ) ;
-		Node ber = scenario.getNetwork().getNodes().get( Id.createNodeId( "pt_160000014391" ) ) ;
+		Node ber = scenario.getNetwork().getNodes().get( Id.createNodeId( nodeBer ) ) ;
 		//Node sxf = scenario.getNetwork().getNodes().get( Id.createNodeId( "3386901041" ) ) ;
 		//Node ber = scenario.getNetwork().getNodes().get( Id.createNodeId( "29786490" ) ) ;
 		
