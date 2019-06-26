@@ -196,9 +196,6 @@ public class TestClass {
 			transitRouteFromSXF.addDeparture( departureFrom );
 		}
 		
-		
-
-
 		//add the transit route to our line
 		line.addRoute( transitRouteFromSXF );
 		line.addRoute( transitRouteToSXF );
