@@ -137,7 +137,7 @@ class CreateDemand {
 
 		// select a landcover feature and test whether it is in the right region. If not select a another one.
 		do {
-			selectedLandcover = landcover.sample();
+			selectedLandcover = landcover.sample(); //TODO: wie hier anzuwenden?
 		} while (!regrion.contains(selectedLandcover));
 
 		// if the landcover feature is in the correct region generate a random coordinate within the bounding box of the
