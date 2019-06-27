@@ -37,18 +37,18 @@ import org.matsim.vehicles.VehicleWriterV1;
 
 public class TestClass {
 	
-	private static final String inputPath = "/home/misax/Documents/berlin-v5.3-10pct_BER/input/" ;
-	private static final String outputPath = "/home/misax/Documents/berlin-v5.3-10pct_BER/edits/" ;
+	private static final Path INPUT_PATH					=	Paths.get( "/home/misax/Documents/berlin-v5.3-10pct_BER/input/" ) ;
+	private static final Path OUTPUT_PATH					=	Paths.get( "/home/misax/Documents/berlin-v5.3-10pct_BER/edits/" ) ;
 	
-	private static final String configFile = inputPath + "berlin-v5.3-10pct.config.xml" ;
+	private static final Path CONFIG_FILE_PATH				=	INPUT_PATH.resolve( "berlin-v5.3-10pct.config.xml" ) ;
 	
-	private static final Path transitSchedule = Paths.get( inputPath + "berlin-v5-transit-schedule.xml.gz" ) ;
-	private static final Path transitVehicles = Paths.get( inputPath + "berlin-v5-transit-vehicles.xml.gz" ) ;
-	private static final Path networkPath = Paths.get( inputPath + "berlin-v5-network.xml.gz" );
+	private static final Path TRANSIT_SCHEDULE_PATH			=	INPUT_PATH.resolve( "berlin-v5-transit-schedule.xml.gz" ) ;
+	private static final Path TRANSIT_VEHCILES_PATH			=	INPUT_PATH.resolve( "berlin-v5-transit-vehicles.xml.gz" ) ;
+	private static final Path NETWORK_PATH					=	INPUT_PATH.resolve( "berlin-v5-network.xml.gz" ) ;
 
-	private static final Path outputNetwork = Paths.get( outputPath + "networkEdit.xml.gz" );
-	private static final Path outputVehicles = Paths.get( outputPath + "transitVehiclesEdit.xml.gz");
-	private static final Path outputTransitSchedule = Paths.get( outputPath + "transitScheduleEdit.xml.gz" ) ;
+	private static final Path OUTPUT_NETWORK_PATH			=	OUTPUT_PATH.resolve( "networkEdit.xml.gz" ) ;
+	private static final Path OUTPUT_VEHICLES_PATH			=	OUTPUT_PATH.resolve( "transitVehiclesEdit.xml.gz") ;
+	private static final Path OUTPUT_TRANSIT_SCHEDULE_PATH	=	OUTPUT_PATH.resolve( "transitScheduleEdit.xml.gz" ) ;
 
 
 	public static void main(String[] args) {
@@ -61,9 +61,9 @@ public class TestClass {
 		Scenario scenario = ScenarioUtils.createScenario(config);
 
 		// read in existing files
-		new TransitScheduleReader( scenario ).readFile( transitSchedule.toString() ) ;
-		new VehicleReaderV1( scenario.getTransitVehicles()).readFile( transitVehicles.toString() ) ;
-		new MatsimNetworkReader( scenario.getNetwork() ).readFile( networkPath.toString() );
+		new TransitScheduleReader( scenario ).readFile( TRANSIT_SCHEDULE_PATH.toString() ) ;
+		new VehicleReaderV1( scenario.getTransitVehicles()).readFile( TRANSIT_VEHCILES_PATH.toString() ) ;
+		new MatsimNetworkReader( scenario.getNetwork() ).readFile( NETWORK_PATH.toString() );
 
 		// create some transit vehicle type
 		VehicleType type = scenario.getTransitVehicles().getFactory().createVehicleType(Id.create( "airport-express",
@@ -204,16 +204,16 @@ public class TestClass {
 		scenario.getTransitSchedule().addTransitLine( line );
 
 		// write out the files
-		new NetworkWriter(scenario.getNetwork()).write( outputNetwork.toString() );
-		new VehicleWriterV1(scenario.getTransitVehicles()).writeFile( outputVehicles.toString() );
-		new TransitScheduleWriter(scenario.getTransitSchedule()).writeFile( outputTransitSchedule.toString() );
+		new NetworkWriter( scenario.getNetwork()).write( OUTPUT_NETWORK_PATH.toString() );
+		new VehicleWriterV1( scenario.getTransitVehicles()).writeFile( OUTPUT_VEHICLES_PATH.toString() );
+		new TransitScheduleWriter( scenario.getTransitSchedule()).writeFile( OUTPUT_TRANSIT_SCHEDULE_PATH.toString() );
 	}
 
-	private Link createLink(String id, Node from, Node to, NetworkFactory factory) {
-		Link link = factory.createLink(Id.createLinkId(id), from, to);
-		link.setAllowedModes(new HashSet<>(Collections.singletonList(TransportMode.pt)));
-		link.setCapacity(999999);
-		link.setLength(NetworkUtils.getEuclideanDistance(link.getFromNode().getCoord(), link.getToNode().getCoord()));
+	private Link createLink( String id, Node from, Node to, NetworkFactory factory ) {
+		Link link = factory.createLink( Id.createLinkId(id), from, to ) ;
+		link.setAllowedModes( new HashSet<>( Collections.singletonList( TransportMode.pt ) ) ) ;
+		link.setCapacity( 999999 );
+		link.setLength(NetworkUtils.getEuclideanDistance( link.getFromNode().getCoord(), link.getToNode().getCoord()) ) ;
 		link.setFreespeed( 83.3333333333 ) ; // 44.4444444444
 		return link;
 	}
