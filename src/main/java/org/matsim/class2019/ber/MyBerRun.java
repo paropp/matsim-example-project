@@ -11,6 +11,7 @@ import org.matsim.core.config.Config;
 import org.matsim.core.config.ConfigUtils;
 import org.matsim.core.config.groups.PlanCalcScoreConfigGroup.ModeParams;
 import org.matsim.core.config.groups.PlansCalcRouteConfigGroup.ModeRoutingParams;
+import org.matsim.core.config.groups.QSimConfigGroup.TrafficDynamics;
 import org.matsim.core.config.groups.StrategyConfigGroup.StrategySettings;
 import org.matsim.core.controler.Controler;
 import org.matsim.core.controler.OutputDirectoryHierarchy.OverwriteFileSetting;
@@ -39,7 +40,7 @@ public class MyBerRun {
 	private static final String END_TIME = "36:00:00" ;
 	private static final double CAPACITY_FACTOR = 0.1 ;
 	private static final double STUCK_TIME = 30 ;
-	private static final String TRAFFIC_DYNAMICS = "kinematicWaves" ;
+	private static final TrafficDynamics TRAFFIC_DYNAMICS = TrafficDynamics.kinematicWaves ;
 	
 
 
@@ -68,7 +69,7 @@ public class MyBerRun {
 		config.plans().setInputFile( inputFile ) ;
 		config.plans().setRemovingUnneccessaryPlanAttributes( removingUnneccessaryPlanAttributes ) ;
 		
-		config.vehicles().setVehiclesFile( str ) ;
+		config.vehicles().setVehiclesFile( str  ) ;
 		
 		config.transit().setTransitScheduleFile( filename ) ;
 		config.transit().setUseTransit( val ) ;
@@ -84,7 +85,7 @@ public class MyBerRun {
 		config.qsim().setMainModes( mainModes ) ;
 		//config.qsim().setNumberOfThreads( numberOfThreads );
 		config.qsim().setStuckTime( STUCK_TIME ) ;
-		//config.qsim().setTrafficDynamics( TRAFFIC_DYNAMICS ) ;
+		config.qsim().setTrafficDynamics( TRAFFIC_DYNAMICS ) ;
 		//config.qsim().setVehiclesSource( "modeVehicleTypesFromVehiclesData" );
 		config.qsim().setInsertingWaitingVehiclesBeforeDrivingVehicles( true );
 		//TODO: finish
