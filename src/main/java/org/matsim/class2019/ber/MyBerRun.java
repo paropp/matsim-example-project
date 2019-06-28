@@ -34,12 +34,21 @@ public class MyBerRun {
 	//constants plansCalcRoute
 	private static final Collection<String> NETWORK_MODES = Arrays.asList("car", "freight", "ride");
 	
-
+	//constants for qsim
+	private static final String START_TIME = "00:00:00" ;
+	private static final String END_TIME = "36:00:00" ;
+	private static final double CAPACITY_FACTOR = 0.1 ;
+	private static final double STUCK_TIME = 30 ;
+	private static final String TRAFFIC_DYNAMICS = "kinematicWaves" ;
+	
 
 
 	public static void main( String[] args ) {
+		
 		String configfile = "./scenarios/equil/config.xml" ;
 		Config config = ConfigUtils.loadConfig( configfile ) ;
+		
+		config.timeAllocationMutator().setMutationRange( 7200.0 );
 		
 		config.controler().setLastIteration( NUMBER_OF_ITERATIONS );
 		config.controler().setOverwriteFileSetting( OverwriteFileSetting.overwriteExistingFiles ) ;
@@ -66,7 +75,19 @@ public class MyBerRun {
 		config.transit().setVehiclesFile( filename ) ;
 		
 		config.plansCalcRoute().setNetworkModes( NETWORK_MODES );
-		config.plansCalcRoute().
+		//TODO: finish
+		
+		config.qsim().setStartTime( START_TIME );
+		config.qsim().setEndTime( END_TIME ) ;
+		config.qsim().setFlowCapFactor( CAPACITY_FACTOR ) ;
+		config.qsim().setStorageCapFactor(CAPACITY_FACTOR) ;
+		config.qsim().setMainModes( mainModes ) ;
+		//config.qsim().setNumberOfThreads( numberOfThreads );
+		config.qsim().setStuckTime( STUCK_TIME ) ;
+		//config.qsim().setTrafficDynamics( TRAFFIC_DYNAMICS ) ;
+		//config.qsim().setVehiclesSource( "modeVehicleTypesFromVehiclesData" );
+		config.qsim().setInsertingWaitingVehiclesBeforeDrivingVehicles( true );
+		//TODO: finish
 
 		
 //		// new mode
