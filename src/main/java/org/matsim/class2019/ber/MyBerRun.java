@@ -23,12 +23,12 @@ import org.matsim.core.scenario.ScenarioUtils;
 
 public class MyBerRun {
 	
-	//constants for controler
+	//constants controler
 	private static final Path BASE_PATH = Paths.get( "/home/misax/Documents/berlin-v5.3-10pct_BER/" ) ;
 	private static final Path INPUT_PATH = BASE_PATH.resolve( "input" ) ;
 	private static final Path EDITS_PATH = BASE_PATH.resolve( "edits" ) ;
 	
-	//constants for global
+	//constants global
 	private static final int NUMBER_OF_ITERATIONS = 500 ;
 	private static final int WRITE_INTERVAL = 100 ;
 	private static final String COORDINATE_SYSTEM = "GK4" ;
@@ -38,7 +38,7 @@ public class MyBerRun {
 	//constants plansCalcRoute
 	private static final Collection<String> NETWORK_MODES = Arrays.asList("car", "freight", "ride");
 	
-	//constants for qsim
+	//constants qsim
 	private static final String START_TIME = "00:00:00" ;
 	private static final String END_TIME = "36:00:00" ;
 	private static final double CAPACITY_FACTOR = 0.1 ;
@@ -52,9 +52,10 @@ public class MyBerRun {
 	
 	//constants strategy
 	private static final double FRACTION_TO_DISABLE_INNOVATION = 0.8 ;
-
 	
-
+	//constants subtourModeChoice
+	private static final String[] SUBTOUR_MODES = new String[] { "car", "pt", "bicycle", "walk" } ;
+	private static final String[] CHAIN_BASED_MODES  = new String[] { "car", "bicycle" } ;
 
 	public static void main( String[] args ) {
 		
@@ -138,6 +139,8 @@ public class MyBerRun {
 		stratSets.setSubpopulation( "freight" );
 		config.strategy().addStrategySettings( stratSets ) ;
 
+		config.subtourModeChoice().setModes( SUBTOUR_MODES ) ;
+		config.subtourModeChoice().setChainBasedModes( CHAIN_BASED_MODES ) ;
 		
 //		// new mode
 //		StrategySettings stratSets = new StrategySettings() ;
