@@ -1,4 +1,4 @@
-package org.matsim.class2019.ha2;
+package org.matsim.class2019.ber;
 
 import org.matsim.api.core.v01.Scenario;
 import org.matsim.core.config.Config;
@@ -11,7 +11,7 @@ import org.matsim.core.controler.OutputDirectoryHierarchy.OverwriteFileSetting;
 import org.matsim.core.replanning.strategies.DefaultPlanStrategiesModule.DefaultStrategy;
 import org.matsim.core.scenario.ScenarioUtils;
 
-public class testClass {
+public class MyBerRun {
 
 	public static void main( String[] args ) {
 		String configfile = "./scenarios/equil/config.xml" ;

@@ -37,7 +37,7 @@ import org.matsim.vehicles.VehicleReaderV1;
 import org.matsim.vehicles.VehicleType;
 import org.matsim.vehicles.VehicleWriterV1;
 
-public class MyClass {
+public class MyBerAlpha {
 	
 	private static final String[] nodesTegel = new String[]{
 			"637767071",
@@ -100,7 +100,7 @@ public class MyClass {
 
 	
 	public static void main(String[] args) {
-		new MyClass().create() ;
+		new MyBerAlpha().create() ;
 	}
 
 	private void create() {

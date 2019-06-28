@@ -35,7 +35,7 @@ import org.matsim.vehicles.VehicleReaderV1;
 import org.matsim.vehicles.VehicleType;
 import org.matsim.vehicles.VehicleWriterV1;
 
-public class TestClass {
+public class MyBerBeta {
 	
 	private static final Path INPUT_PATH					=	Paths.get( "/home/misax/Documents/berlin-v5.3-10pct_BER/input/" ) ;
 	private static final Path OUTPUT_PATH					=	Paths.get( "/home/misax/Documents/berlin-v5.3-10pct_BER/edits/" ) ;
@@ -52,7 +52,7 @@ public class TestClass {
 
 
 	public static void main(String[] args) {
-		new TestClass().create();
+		new MyBerBeta().create();
 	}
 
 	private void create() {
