@@ -16,14 +16,19 @@ import org.matsim.core.scenario.ScenarioUtils;
 
 public class MyBerRun {
 	
+	//constants for controler
 	private static final Path BASE_PATH = Paths.get( "/home/misax/Documents/berlin-v5.3-10pct_BER/" ) ;
 	private static final Path INPUT_PATH = BASE_PATH.resolve( "input" ) ;
 	private static final Path EDITS_PATH = BASE_PATH.resolve( "edits" ) ;
 	
-	private static final String COORDINATE_SYSTEM = "GK4" ;
-	private static final long RANDOM_SEED = 2342 ;
+	//constants for global
 	private static final int NUMBER_OF_ITERATIONS = 500 ;
 	private static final int WRITE_INTERVAL = 100 ;
+	private static final String COORDINATE_SYSTEM = "GK4" ;
+	private static final int NUMBER_OF_THREADS = 2;
+	private static final long RANDOM_SEED = 2342 ;
+
+
 
 	public static void main( String[] args ) {
 		String configfile = "./scenarios/equil/config.xml" ;
@@ -41,8 +46,19 @@ public class MyBerRun {
 		config.global().setNumberOfThreads( NUMBER_OF_THREADS );
 		config.global().setRandomSeed( RANDOM_SEED );
 		
-		config.network().setInputFile( EDITS_PATH.resolve( "" ) );
+		config.network().setInputFile( EDITS_PATH.resolve( "" ).toString() ) ;
+		
+		config.plans().setInputPersonAttributeFile( inputPersonAttributeFile ) ;
+		config.plans().setInputFile( inputFile ) ;
+		config.plans().setRemovingUnneccessaryPlanAttributes( removingUnneccessaryPlanAttributes ) ;
+		
+		config.vehicles().setVehiclesFile( str ) ;
+		
+		config.transit().setTransitScheduleFile( filename ) ;
+		config.transit().setUseTransit( val ) ;
+		config.transit().setVehiclesFile( filename ) ;
 
+		
 //		// new mode
 //		StrategySettings stratSets = new StrategySettings() ;
 //		stratSets.setStrategyName( DefaultStrategy.ChangeSingleTripMode ) ;
