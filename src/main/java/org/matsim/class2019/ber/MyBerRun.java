@@ -65,6 +65,10 @@ public class MyBerRun {
 	private static final String ANALYZED_MODES = "car,freight" ;
 	//TODO: ask: why not more?
 	private static final boolean DOES_SEPARATE_MODES = true ;
+	
+	//constants linkStats
+	private static final int AVG_LINK_STATS_OVER_ITERATIONS = 5;
+	private static final int WRITE_COUNTS_INTERVAL = 10 ;
 
 	public static void main( String[] args ) {
 		
@@ -156,6 +160,9 @@ public class MyBerRun {
 		
 		config.travelTimeCalculator().setAnalyzedModesAsString( ANALYZED_MODES ) ;
 		config.travelTimeCalculator().setSeparateModes( DOES_SEPARATE_MODES ) ;
+		
+		config.linkStats().setAverageLinkStatsOverIterations( AVG_LINK_STATS_OVER_ITERATIONS );
+		config.linkStats().setWriteLinkStatsInterval( WRITE_COUNTS_INTERVAL );
 		
 //		// new mode
 //		StrategySettings stratSets = new StrategySettings() ;
