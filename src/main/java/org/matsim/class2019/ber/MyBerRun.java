@@ -2,6 +2,9 @@ package org.matsim.class2019.ber;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 
 import org.matsim.api.core.v01.Scenario;
 import org.matsim.core.config.Config;
@@ -27,6 +30,10 @@ public class MyBerRun {
 	private static final String COORDINATE_SYSTEM = "GK4" ;
 	private static final int NUMBER_OF_THREADS = 2;
 	private static final long RANDOM_SEED = 2342 ;
+	
+	//constants plansCalcRoute
+	private static final Collection<String> NETWORK_MODES = Arrays.asList("car", "freight", "ride");
+	
 
 
 
@@ -57,6 +64,9 @@ public class MyBerRun {
 		config.transit().setTransitScheduleFile( filename ) ;
 		config.transit().setUseTransit( val ) ;
 		config.transit().setVehiclesFile( filename ) ;
+		
+		config.plansCalcRoute().setNetworkModes( NETWORK_MODES );
+		config.plansCalcRoute().
 
 		
 //		// new mode
