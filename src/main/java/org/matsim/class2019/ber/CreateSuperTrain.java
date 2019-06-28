@@ -35,10 +35,11 @@ import org.matsim.vehicles.VehicleReaderV1;
 import org.matsim.vehicles.VehicleType;
 import org.matsim.vehicles.VehicleWriterV1;
 
-public class MyBerBeta {
+public class CreateSuperTrain {
 	
-	private static final Path INPUT_PATH					=	Paths.get( "/home/misax/Documents/berlin-v5.3-10pct_BER/input/" ) ;
-	private static final Path OUTPUT_PATH					=	Paths.get( "/home/misax/Documents/berlin-v5.3-10pct_BER/edits/" ) ;
+	private static final Path BASE_PATH						=	Paths.get( "/home/misax/Documents/berlin-v5.3-10pct_BER/" ) ;
+	private static final Path INPUT_PATH					=	BASE_PATH.resolve( "input" ) ;
+	private static final Path OUTPUT_PATH					=	BASE_PATH.resolve( "edits" ) ;
 	
 	private static final Path CONFIG_FILE_PATH				=	INPUT_PATH.resolve( "berlin-v5.3-10pct.config.xml" ) ;
 	
@@ -46,19 +47,19 @@ public class MyBerBeta {
 	private static final Path TRANSIT_VEHCILES_PATH			=	INPUT_PATH.resolve( "berlin-v5-transit-vehicles.xml.gz" ) ;
 	private static final Path NETWORK_PATH					=	INPUT_PATH.resolve( "berlin-v5-network.xml.gz" ) ;
 
-	private static final Path OUTPUT_NETWORK_PATH			=	OUTPUT_PATH.resolve( "networkEdit.xml.gz" ) ;
-	private static final Path OUTPUT_VEHICLES_PATH			=	OUTPUT_PATH.resolve( "transitVehiclesEdit.xml.gz") ;
-	private static final Path OUTPUT_TRANSIT_SCHEDULE_PATH	=	OUTPUT_PATH.resolve( "transitScheduleEdit.xml.gz" ) ;
+	private static final Path OUTPUT_NETWORK_PATH			=	OUTPUT_PATH.resolve( "berlin-v5-network.xml.gz" ) ;
+	private static final Path OUTPUT_VEHICLES_PATH			=	OUTPUT_PATH.resolve( "berlin-v5-transit-vehicles.xml.gz") ;
+	private static final Path OUTPUT_TRANSIT_SCHEDULE_PATH	=	OUTPUT_PATH.resolve( "berlin-v5-transit-schedule.xml.gz" ) ;
 
 
 	public static void main(String[] args) {
-		new MyBerBeta().create();
+		new CreateSuperTrain().run();
 	}
 
-	private void create() {
+	private void run() {
 
-		Config config = ConfigUtils.createConfig();
-		Scenario scenario = ScenarioUtils.createScenario(config);
+		Config config = ConfigUtils.createConfig() ;
+		Scenario scenario = ScenarioUtils.createScenario( config ) ;
 
 		// read in existing files
 		new TransitScheduleReader( scenario ).readFile( TRANSIT_SCHEDULE_PATH.toString() ) ;
@@ -66,24 +67,24 @@ public class MyBerBeta {
 		new MatsimNetworkReader( scenario.getNetwork() ).readFile( NETWORK_PATH.toString() );
 
 		// create some transit vehicle type
-		VehicleType type = scenario.getTransitVehicles().getFactory().createVehicleType(Id.create( "airport-express",
-				VehicleType.class ));
-		type.setLength( 150 );
-		VehicleCapacity capacity = scenario.getTransitVehicles().getFactory().createVehicleCapacity();
-		capacity.setSeats( 500 );
-		type.setCapacity( capacity );
-		type.setPcuEquivalents( 0 );
-		scenario.getTransitVehicles().addVehicleType(type);
+		VehicleType type = scenario.getTransitVehicles().getFactory().createVehicleType( Id.create( "airport-express",
+				VehicleType.class ) ) ;
+		type.setLength( 150 ) ;
+		VehicleCapacity capacity = scenario.getTransitVehicles().getFactory().createVehicleCapacity() ;
+		capacity.setSeats( 500 ) ;
+		type.setCapacity( capacity ) ;
+		type.setPcuEquivalents( 0 ) ;
+		scenario.getTransitVehicles().addVehicleType( type ) ;
 
-		// create two vehicles
+		// create vehicles for '10 service
 		List<Vehicle> vehiclesToSxfList = new ArrayList<>();
 		List<Vehicle> vehiclesFromSxfList = new ArrayList<>();
-		for ( int i = 0; i < 192; i++) {
+		for ( int i = 0; i < 132; i++ ) {
 			
 			Vehicle vehicleTo = scenario.getTransitVehicles().getFactory().createVehicle(
-					Id.createVehicleId( "vehicleToSXF-"+i ), type);
+					Id.createVehicleId( "vehicleToSXF-"+i ), type ) ;
 			Vehicle vehicleFrom = scenario.getTransitVehicles().getFactory().createVehicle(
-					Id.createVehicleId( "vehicleFromSXF-"+i ), type);
+					Id.createVehicleId( "vehicleFromSXF-"+i ), type ) ;
 			
 			scenario.getTransitVehicles().addVehicle( vehicleTo ) ;
 			scenario.getTransitVehicles().addVehicle( vehicleFrom ) ;
@@ -93,15 +94,15 @@ public class MyBerBeta {
 		
 
 		// get the existing nodes we want to connect
-		Node stop1NodeHfb = scenario.getNetwork().getNodes().get(Id.createNodeId( "pt_000008011160" )); // Hbf
-		Node stop2NodeSKreuz = scenario.getNetwork().getNodes().get(Id.createNodeId( "pt_000008011113" )); // Südkreuz
-		Node stop3NodeSXF = scenario.getNetwork().getNodes().get(Id.createNodeId( "pt_000008010109" )); // SXF
+		Node stop1NodeHfb = scenario.getNetwork().getNodes().get( Id.createNodeId( "pt_000008011160" ) ) ; // Hbf
+		Node stop2NodeSKreuz = scenario.getNetwork().getNodes().get( Id.createNodeId( "pt_000008011113" ) ) ; // Südkreuz
+		Node stop3NodeSXF = scenario.getNetwork().getNodes().get( Id.createNodeId( "pt_000008010109" ) ) ; // SXF
 
 		// connect nodes with links
-		Link link1 = createLink( "hbf-skreuz", stop1NodeHfb, stop2NodeSKreuz, scenario.getNetwork().getFactory() );
-		Link link2 = createLink( "skreuz-sxf", stop2NodeSKreuz, stop3NodeSXF, scenario.getNetwork().getFactory() );
-		Link link3 = createLink( "skreuz-hbf", stop2NodeSKreuz, stop1NodeHfb, scenario.getNetwork().getFactory() );
-		Link link4 = createLink( "sxf-skreuz", stop3NodeSXF, stop2NodeSKreuz, scenario.getNetwork().getFactory() );
+		Link link1 = createLink( "hbf-skreuz", stop1NodeHfb, stop2NodeSKreuz, scenario.getNetwork().getFactory() ) ;
+		Link link2 = createLink( "skreuz-sxf", stop2NodeSKreuz, stop3NodeSXF, scenario.getNetwork().getFactory() ) ;
+		Link link3 = createLink( "skreuz-hbf", stop2NodeSKreuz, stop1NodeHfb, scenario.getNetwork().getFactory() ) ;
+		Link link4 = createLink( "sxf-skreuz", stop3NodeSXF, stop2NodeSKreuz, scenario.getNetwork().getFactory() ) ;
 		scenario.getNetwork().addLink( link1 ) ;
 		scenario.getNetwork().addLink( link2 ) ;
 		scenario.getNetwork().addLink( link3 ) ;
@@ -109,86 +110,85 @@ public class MyBerBeta {
 
 		// create stops and add them to the scenario
 		TransitStopFacility stop1 = scenario.getTransitSchedule().getFactory().createTransitStopFacility(
-				Id.create("airport-express-stop-1", TransitStopFacility.class), stop1NodeHfb.getCoord(), false);
-		stop1.setName("Hbf-airport-express-toSXF");
-		stop1.setLinkId(link1.getId());
+				Id.create( "airport-express-stop-1", TransitStopFacility.class), stop1NodeHfb.getCoord(), false ) ;
+		stop1.setName( "Hbf-airport-express-toSXF" ) ;
+		stop1.setLinkId( link1.getId() ) ;
 
 		TransitStopFacility stop2 = scenario.getTransitSchedule().getFactory().createTransitStopFacility(
-				Id.create("airport-express-stop-2", TransitStopFacility.class), stop2NodeSKreuz.getCoord(), false);
-		stop2.setName("SKreuz-super-train-toSXF");
-		stop2.setLinkId(link1.getId());
+				Id.create( "airport-express-stop-2", TransitStopFacility.class), stop2NodeSKreuz.getCoord(), false ) ;
+		stop2.setName( "SKreuz-super-train-toSXF" ) ;
+		stop2.setLinkId( link1.getId() ) ;
 
 		TransitStopFacility stop3 = scenario.getTransitSchedule().getFactory().createTransitStopFacility(
-				Id.create("airport-express-stop-3", TransitStopFacility.class), stop3NodeSXF.getCoord(), false);
-		stop2.setName("SXF-super-train-toSXF");
-		stop3.setLinkId(link2.getId());
+				Id.create( "airport-express-stop-3", TransitStopFacility.class), stop3NodeSXF.getCoord(), false );
+		stop2.setName( "SXF-super-train-toSXF" ) ;
+		stop3.setLinkId( link2.getId() ) ;
 		
 		TransitStopFacility stop4 = scenario.getTransitSchedule().getFactory().createTransitStopFacility(
-				Id.create("airport-express-stop-4", TransitStopFacility.class), stop1NodeHfb.getCoord(), false);
-		stop1.setName("SXF-airport-express-fromSXF");
-		stop1.setLinkId(link4.getId());
+				Id.create( "airport-express-stop-4", TransitStopFacility.class), stop1NodeHfb.getCoord(), false );
+		stop1.setName( "SXF-airport-express-fromSXF" ) ;
+		stop1.setLinkId( link4.getId() );
 
 		TransitStopFacility stop5 = scenario.getTransitSchedule().getFactory().createTransitStopFacility(
-				Id.create("airport-express-stop-5", TransitStopFacility.class), stop2NodeSKreuz.getCoord(), false);
-		stop2.setName("SKreuz-super-train-fromSXF");
-		stop2.setLinkId(link4.getId());
+				Id.create( "airport-express-stop-5", TransitStopFacility.class), stop2NodeSKreuz.getCoord(), false );
+		stop2.setName( "SKreuz-super-train-fromSXF" ) ;
+		stop2.setLinkId( link4.getId() ) ;
 
 		TransitStopFacility stop6 = scenario.getTransitSchedule().getFactory().createTransitStopFacility(
-				Id.create("airport-express-stop-6", TransitStopFacility.class), stop3NodeSXF.getCoord(), false);
-		stop2.setName("Hbf-super-train-fromSXF");
-		stop3.setLinkId(link3.getId());
+				Id.create( "airport-express-stop-6", TransitStopFacility.class), stop3NodeSXF.getCoord(), false );
+		stop2.setName( "Hbf-super-train-fromSXF" ) ;
+		stop3.setLinkId( link3.getId() ) ;
 
-		scenario.getTransitSchedule().addStopFacility(stop1);
-		scenario.getTransitSchedule().addStopFacility(stop2);
-		scenario.getTransitSchedule().addStopFacility(stop3);
-		scenario.getTransitSchedule().addStopFacility(stop4);
-		scenario.getTransitSchedule().addStopFacility(stop5);
-		scenario.getTransitSchedule().addStopFacility(stop6);
+		scenario.getTransitSchedule().addStopFacility( stop1 ) ;
+		scenario.getTransitSchedule().addStopFacility( stop2 ) ;
+		scenario.getTransitSchedule().addStopFacility( stop3 ) ;
+		scenario.getTransitSchedule().addStopFacility( stop4 ) ;
+		scenario.getTransitSchedule().addStopFacility( stop5 ) ;
+		scenario.getTransitSchedule().addStopFacility( stop6 ) ;
 
 		// create a line
-		TransitLine line = scenario.getTransitSchedule().getFactory().createTransitLine(Id.create("line1", TransitLine.class));
-		line.setName("super-train-line-1");
+		TransitLine line = scenario.getTransitSchedule().getFactory().createTransitLine( Id.create( "line1", TransitLine.class ) ) ;
+		line.setName( "super-train-line-1" ) ;
 
 		//create transit route stops
 		List<TransitRouteStop> transitStops1 = Arrays.asList(
-				scenario.getTransitSchedule().getFactory().createTransitRouteStop(stop1, 0, 0),
-				scenario.getTransitSchedule().getFactory().createTransitRouteStop(stop2, 120, 120),
-				scenario.getTransitSchedule().getFactory().createTransitRouteStop(stop3, 420, 420)
+				scenario.getTransitSchedule().getFactory().createTransitRouteStop( stop1, 0, 0 ),
+				scenario.getTransitSchedule().getFactory().createTransitRouteStop( stop2, 120, 120 ),
+				scenario.getTransitSchedule().getFactory().createTransitRouteStop( stop3, 420, 420 )
 		) ;
 		
 		List<TransitRouteStop> transitStops2 = Arrays.asList(
-				scenario.getTransitSchedule().getFactory().createTransitRouteStop(stop4, 0, 0),
-				scenario.getTransitSchedule().getFactory().createTransitRouteStop(stop5, 300, 300),
-				scenario.getTransitSchedule().getFactory().createTransitRouteStop(stop6, 420, 420)
+				scenario.getTransitSchedule().getFactory().createTransitRouteStop( stop4, 0, 0 ),
+				scenario.getTransitSchedule().getFactory().createTransitRouteStop( stop5, 300, 300 ),
+				scenario.getTransitSchedule().getFactory().createTransitRouteStop( stop6, 420, 420 )
 		) ;
 
 		// create a transit route with the previously created transit stops.
 		// also give it a network route with the two links our transit stops are located at
 		TransitRoute transitRouteToSXF = scenario.getTransitSchedule().getFactory().createTransitRoute(
-				Id.create("super-train-line-1-route-0", TransitRoute.class),
-				RouteUtils.createNetworkRoute(Arrays.asList(link1.getId(), link2.getId()), scenario.getNetwork()),
+				Id.create( "super-train-line-1-route-0", TransitRoute.class ),
+				RouteUtils.createNetworkRoute( Arrays.asList( link1.getId(), link2.getId()), scenario.getNetwork()),
 				transitStops1,
 				TransportMode.train
 		);
 		
 		TransitRoute transitRouteFromSXF = scenario.getTransitSchedule().getFactory().createTransitRoute(
-				Id.create("super-train-line-1-route-1", TransitRoute.class),
-				RouteUtils.createNetworkRoute(Arrays.asList(link4.getId(), link3.getId()), scenario.getNetwork()),
+				Id.create( "super-train-line-1-route-1", TransitRoute.class ),
+				RouteUtils.createNetworkRoute( Arrays.asList( link4.getId(), link3.getId()), scenario.getNetwork()),
 				transitStops2,
 				TransportMode.train
 		);
 
-		// create and add two departures for the transit route
-		// departure every 7 minutes, because of peak fly statistics
-		for (int i = 0; i < 192; i++) {
+		// departure every 10 minutes, because of peak fly statistics
+		for ( int i = 0; i < 132; i++ ) {
 			
 			Departure departureTo = scenario.getTransitSchedule().getFactory().createDeparture(
-					Id.create( "departureTo-"+i, Departure.class ), 10800 + i * 420
+					Id.create( "departureTo-"+i, Departure.class ), 10800 + i * 600
 			);
 			departureTo.setVehicleId( vehiclesToSxfList.get( i ).getId() );
 			
 			Departure departureFrom = scenario.getTransitSchedule().getFactory().createDeparture(
-					Id.create( "departureFrom-"+i, Departure.class ), 10800 + i * 420
+					Id.create( "departureFrom-"+i, Departure.class ), 10800 + i * 600
 			);
 			departureFrom.setVehicleId( vehiclesFromSxfList.get( i ).getId() );
 			
