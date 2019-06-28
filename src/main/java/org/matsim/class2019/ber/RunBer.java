@@ -72,7 +72,7 @@ public class RunBer {
 		// HERE
 		//////////
 		new CreateSuperTrain().run();
-		
+		new CreateBerDemand().run();
 		new RunBer( configFileName, overridingConfigFileName ).run() ;
 	}
 	
