@@ -67,6 +67,12 @@ public class RunBer {
 			if ( args.length>1 ) overridingConfigFileName = args[1];
 		}
 		log.info( "config file: " + configFileName );
+		
+		//////////
+		// HERE
+		//////////
+		new CreateSuperTrain().run();
+		
 		new RunBer( configFileName, overridingConfigFileName ).run() ;
 	}
 	

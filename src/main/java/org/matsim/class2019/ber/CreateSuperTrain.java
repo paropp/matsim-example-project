@@ -51,12 +51,7 @@ public class CreateSuperTrain {
 	private static final Path OUTPUT_VEHICLES_PATH			=	OUTPUT_PATH.resolve( "berlin-v5-transit-vehicles.xml.gz") ;
 	private static final Path OUTPUT_TRANSIT_SCHEDULE_PATH	=	OUTPUT_PATH.resolve( "berlin-v5-transit-schedule.xml.gz" ) ;
 
-
-	public static void main(String[] args) {
-		new CreateSuperTrain().run();
-	}
-
-	private void run() {
+	protected void run() {
 
 		Config config = ConfigUtils.createConfig() ;
 		Scenario scenario = ScenarioUtils.createScenario( config ) ;
@@ -76,7 +71,7 @@ public class CreateSuperTrain {
 		type.setPcuEquivalents( 0 ) ;
 		scenario.getTransitVehicles().addVehicleType( type ) ;
 
-		// create vehicles for '10 service
+		// create vehicles for service every 10 minutes
 		List<Vehicle> vehiclesToSxfList = new ArrayList<>();
 		List<Vehicle> vehiclesFromSxfList = new ArrayList<>();
 		for ( int i = 0; i < 132; i++ ) {
@@ -179,7 +174,7 @@ public class CreateSuperTrain {
 				TransportMode.train
 		);
 
-		// departure every 10 minutes, because of peak fly statistics
+		// create departures every 10 minutes from 03:00 to 01:00
 		for ( int i = 0; i < 132; i++ ) {
 			
 			Departure departureTo = scenario.getTransitSchedule().getFactory().createDeparture(
