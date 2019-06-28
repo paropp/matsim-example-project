@@ -5,8 +5,11 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.matsim.api.core.v01.Scenario;
+import org.matsim.class2019.network.Link2Add;
 import org.matsim.core.config.Config;
 import org.matsim.core.config.ConfigUtils;
 import org.matsim.core.config.groups.PlanCalcScoreConfigGroup.ModeParams;
@@ -40,7 +43,16 @@ public class MyBerRun {
 	private static final String END_TIME = "36:00:00" ;
 	private static final double CAPACITY_FACTOR = 0.1 ;
 	private static final double STUCK_TIME = 30 ;
+	//TODO: ask why, when:
+	//investigations have shown that the simulations become,
+	//in comparison to traffic counts data,
+	//less realistic when this parameter is increased
 	private static final TrafficDynamics TRAFFIC_DYNAMICS = TrafficDynamics.kinematicWaves ;
+	private static final boolean isInsertingWaitingVehiclesBeforeDrivingVehicles = true ;
+	
+	//constants strategy
+	private static final double FRACTION_TO_DISABLE_INNOVATION = 0.8 ;
+
 	
 
 
@@ -87,8 +99,44 @@ public class MyBerRun {
 		config.qsim().setStuckTime( STUCK_TIME ) ;
 		config.qsim().setTrafficDynamics( TRAFFIC_DYNAMICS ) ;
 		//config.qsim().setVehiclesSource( "modeVehicleTypesFromVehiclesData" );
-		config.qsim().setInsertingWaitingVehiclesBeforeDrivingVehicles( true );
+		config.qsim().setInsertingWaitingVehiclesBeforeDrivingVehicles( isInsertingWaitingVehiclesBeforeDrivingVehicles );
 		//TODO: finish
+		
+		//config.strategy().setMaxAgentPlanMemorySize( maxAgentPlanMemorySize ) ;
+		//TODO: finish
+		config.strategy().setFractionOfIterationsToDisableInnovation( FRACTION_TO_DISABLE_INNOVATION );
+		
+		StrategySettings stratSets = new StrategySettings() ;
+		
+		stratSets.setStrategyName( "ChangeExpBeta" ) ;
+		stratSets.setWeight( 0.85 ) ;
+		stratSets.setSubpopulation( "person" );
+		config.strategy().addStrategySettings( stratSets ) ;
+		
+		stratSets.setStrategyName( "ReRoute" ) ;
+		stratSets.setWeight( 0.05 ) ;
+		stratSets.setSubpopulation( "person" );
+		config.strategy().addStrategySettings( stratSets ) ;
+		
+		stratSets.setStrategyName( "SubtourModeChoice" ) ;
+		stratSets.setWeight( 0.05 ) ;
+		stratSets.setSubpopulation( "person" );
+		config.strategy().addStrategySettings( stratSets ) ;
+		
+		stratSets.setStrategyName( "TimeAllocationMutator" ) ;
+		stratSets.setWeight( 0.05 ) ;
+		stratSets.setSubpopulation( "person" );
+		config.strategy().addStrategySettings( stratSets ) ;
+		
+		stratSets.setStrategyName( "ChangeExpBeta" ) ;
+		stratSets.setWeight( 0.95 ) ;
+		stratSets.setSubpopulation( "freight" );
+		config.strategy().addStrategySettings( stratSets ) ;
+		
+		stratSets.setStrategyName( "ReRoute" ) ;
+		stratSets.setWeight( 0.05 ) ;
+		stratSets.setSubpopulation( "freight" );
+		config.strategy().addStrategySettings( stratSets ) ;
 
 		
 //		// new mode
