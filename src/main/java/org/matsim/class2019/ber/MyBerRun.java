@@ -43,24 +43,34 @@ public class MyBerRun {
 	private static final String END_TIME = "36:00:00" ;
 	private static final double CAPACITY_FACTOR = 0.1 ;
 	private static final double STUCK_TIME = 30 ;
-	//TODO: ask why, when:
+	//TODO: ask why 30, when:
 	//investigations have shown that the simulations become,
 	//in comparison to traffic counts data,
-	//less realistic when this parameter is increased
+	//less realistic when this parameter is increased (beyond 10)
 	private static final TrafficDynamics TRAFFIC_DYNAMICS = TrafficDynamics.kinematicWaves ;
 	private static final boolean isInsertingWaitingVehiclesBeforeDrivingVehicles = true ;
 	
 	//constants strategy
 	private static final double FRACTION_TO_DISABLE_INNOVATION = 0.8 ;
+	private static final int PLAN_MEMORY_SIZE = 10 ;
+	//TODO: ask: wrong to increase this, to compare base-policy-case?
+	private static final String PLAN_SELECTOR_FOR_REMOVAL = "WorstPlanSelector" ;
+	//TODO: ask: better Choice (SelectExpBetaForRemoval)?
 	
 	//constants subtourModeChoice
 	private static final String[] SUBTOUR_MODES = new String[] { "car", "pt", "bicycle", "walk" } ;
 	private static final String[] CHAIN_BASED_MODES  = new String[] { "car", "bicycle" } ;
+	
+	//constants travelTimeCalculator
+	private static final String ANALYZED_MODES = "car,freight" ;
+	//TODO: ask: why not more?
+	private static final boolean DOES_SEPARATE_MODES = true ;
 
 	public static void main( String[] args ) {
 		
 		String configfile = "./scenarios/equil/config.xml" ;
 		Config config = ConfigUtils.loadConfig( configfile ) ;
+		//TODO: no more reading
 		
 		config.timeAllocationMutator().setMutationRange( 7200.0 );
 		
@@ -103,9 +113,11 @@ public class MyBerRun {
 		config.qsim().setInsertingWaitingVehiclesBeforeDrivingVehicles( isInsertingWaitingVehiclesBeforeDrivingVehicles );
 		//TODO: finish
 		
-		//config.strategy().setMaxAgentPlanMemorySize( maxAgentPlanMemorySize ) ;
-		//TODO: finish
 		config.strategy().setFractionOfIterationsToDisableInnovation( FRACTION_TO_DISABLE_INNOVATION );
+		config.strategy().setMaxAgentPlanMemorySize( PLAN_MEMORY_SIZE ) ;
+		config.strategy().setPlanSelectorForRemoval( PLAN_SELECTOR_FOR_REMOVAL ) ;
+		//TODO: ask: to be set? not set in standard config.
+		
 		
 		StrategySettings stratSets = new StrategySettings() ;
 		
@@ -141,6 +153,9 @@ public class MyBerRun {
 
 		config.subtourModeChoice().setModes( SUBTOUR_MODES ) ;
 		config.subtourModeChoice().setChainBasedModes( CHAIN_BASED_MODES ) ;
+		
+		config.travelTimeCalculator().setAnalyzedModesAsString( ANALYZED_MODES ) ;
+		config.travelTimeCalculator().setSeparateModes( DOES_SEPARATE_MODES ) ;
 		
 //		// new mode
 //		StrategySettings stratSets = new StrategySettings() ;
