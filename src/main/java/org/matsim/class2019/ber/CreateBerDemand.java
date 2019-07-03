@@ -57,6 +57,7 @@ class CreateBerDemand {
 	private Population population;
 
 	CreateBerDemand() {
+		//TODO: pfade übergeben
 
 		Path shapeFolder = Paths.get("/home/misax/Documents/berlin-v5.3-10pct_BER/input/berlin-shp");
 		
@@ -95,6 +96,7 @@ class CreateBerDemand {
 	private void createInterRegionCommuters() {
 
 		logger.info("Create travelers");
+		//TODO: beenden
 
 		for (XXX) {
 			

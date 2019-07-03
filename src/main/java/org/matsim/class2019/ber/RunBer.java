@@ -76,6 +76,8 @@ public class RunBer {
 	private static final Path OUTPUT_TRANSIT_SCHEDULE_PATH	=	OUTPUT_PATH.resolve( "berlin-v5-transit-schedule.xml.gz" ) ;
 	
 	public static void main(String[] args) {
+		
+		//TODO: reduce
 		String configFileName ;
 		String overridingConfigFileName = null;
 		
@@ -100,7 +102,7 @@ public class RunBer {
 				OUTPUT_VEHICLES_PATH,
 				OUTPUT_NETWORK_PATH
 				);
-		
+		//TODO: pfade übergeben
 		new CreateBerDemand().run();
 		new RunBer( configFileName, overridingConfigFileName ).run() ;
 	}
