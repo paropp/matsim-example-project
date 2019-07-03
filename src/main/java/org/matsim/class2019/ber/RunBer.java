@@ -21,6 +21,11 @@ package org.matsim.class2019.ber;
 
 import static org.matsim.core.config.groups.ControlerConfigGroup.RoutingAlgorithmType.FastAStarLandmarks;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.log4j.Logger;
 import org.matsim.analysis.ScoreStats;
 import org.matsim.api.core.v01.Scenario;
@@ -55,13 +60,29 @@ public class RunBer {
 	private boolean hasPreparedConfig = false ;
 	private boolean hasPreparedScenario = false ;
 	private boolean hasPreparedControler = false ;
+
+	private static final Path BASE_PATH						=	Paths.get( "/home/misax/Documents/berlin-v5.3-10pct_BER/" ) ;
+	private static final Path INPUT_PATH					=	BASE_PATH.resolve( "input" ) ;
+	private static final Path OUTPUT_PATH					=	BASE_PATH.resolve( "edits" ) ;
+	
+	private static final Path CONFIG_FILE_PATH				=	INPUT_PATH.resolve( "berlin-v5.3-10pct.config.xml" ) ;
+	
+	private static final Path TRANSIT_SCHEDULE_PATH			=	INPUT_PATH.resolve( "berlin-v5-transit-schedule.xml.gz" ) ;
+	private static final Path TRANSIT_VEHCILES_PATH			=	INPUT_PATH.resolve( "berlin-v5-transit-vehicles.xml.gz" ) ;
+	private static final Path NETWORK_PATH					=	INPUT_PATH.resolve( "berlin-v5-network.xml.gz" ) ;
+
+	private static final Path OUTPUT_NETWORK_PATH			=	OUTPUT_PATH.resolve( "berlin-v5-network.xml.gz" ) ;
+	private static final Path OUTPUT_VEHICLES_PATH			=	OUTPUT_PATH.resolve( "berlin-v5-transit-vehicles.xml.gz") ;
+	private static final Path OUTPUT_TRANSIT_SCHEDULE_PATH	=	OUTPUT_PATH.resolve( "berlin-v5-transit-schedule.xml.gz" ) ;
 	
 	public static void main(String[] args) {
 		String configFileName ;
 		String overridingConfigFileName = null;
+		
 		if ( args.length==0 || args[0].equals("")) {
-			configFileName = "scenarios/berlin-v5.3-10pct/input/berlin-v5.3-10pct.config.xml";
+			configFileName = CONFIG_FILE_PATH.toString() ;
 			overridingConfigFileName = "overridingConfig.xml";
+
 		} else {
 			configFileName = args[0];
 			if ( args.length>1 ) overridingConfigFileName = args[1];
@@ -71,7 +92,15 @@ public class RunBer {
 		//////////
 		// HERE
 		//////////
-		new CreateSuperTrain().run();
+		new CreateSuperTrain().run(
+				TRANSIT_SCHEDULE_PATH,
+				TRANSIT_VEHCILES_PATH,
+				NETWORK_PATH,
+				OUTPUT_TRANSIT_SCHEDULE_PATH,
+				OUTPUT_VEHICLES_PATH,
+				OUTPUT_NETWORK_PATH
+				);
+		
 		new CreateBerDemand().run();
 		new RunBer( configFileName, overridingConfigFileName ).run() ;
 	}
@@ -159,6 +188,14 @@ public class RunBer {
 		config.plansCalcRoute().setInsertingAccessEgressWalk( true );
 		config.qsim().setUsingTravelTimeCheckInTeleportation( true );
 		config.qsim().setTrafficDynamics( TrafficDynamics.kinematicWaves );
+		
+		//////////
+		// EDITS
+		//////////
+		//cause files referenced in config were changed
+		config.network().setInputFile( OUTPUT_NETWORK_PATH.toString() );
+		config.transit().setTransitScheduleFile( OUTPUT_TRANSIT_SCHEDULE_PATH.toString() );
+		config.transit().setVehiclesFile( OUTPUT_VEHICLES_PATH.toString() );
 		
 		// activities:
 		for ( long ii = 600 ; ii <= 97200; ii+=600 ) {

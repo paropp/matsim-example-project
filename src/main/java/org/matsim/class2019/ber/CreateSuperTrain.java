@@ -36,30 +36,22 @@ import org.matsim.vehicles.VehicleType;
 import org.matsim.vehicles.VehicleWriterV1;
 
 public class CreateSuperTrain {
-	
-	private static final Path BASE_PATH						=	Paths.get( "/home/misax/Documents/berlin-v5.3-10pct_BER/" ) ;
-	private static final Path INPUT_PATH					=	BASE_PATH.resolve( "input" ) ;
-	private static final Path OUTPUT_PATH					=	BASE_PATH.resolve( "edits" ) ;
-	
-	private static final Path CONFIG_FILE_PATH				=	INPUT_PATH.resolve( "berlin-v5.3-10pct.config.xml" ) ;
-	
-	private static final Path TRANSIT_SCHEDULE_PATH			=	INPUT_PATH.resolve( "berlin-v5-transit-schedule.xml.gz" ) ;
-	private static final Path TRANSIT_VEHCILES_PATH			=	INPUT_PATH.resolve( "berlin-v5-transit-vehicles.xml.gz" ) ;
-	private static final Path NETWORK_PATH					=	INPUT_PATH.resolve( "berlin-v5-network.xml.gz" ) ;
 
-	private static final Path OUTPUT_NETWORK_PATH			=	OUTPUT_PATH.resolve( "berlin-v5-network.xml.gz" ) ;
-	private static final Path OUTPUT_VEHICLES_PATH			=	OUTPUT_PATH.resolve( "berlin-v5-transit-vehicles.xml.gz") ;
-	private static final Path OUTPUT_TRANSIT_SCHEDULE_PATH	=	OUTPUT_PATH.resolve( "berlin-v5-transit-schedule.xml.gz" ) ;
-
-	protected void run() {
+	protected void run(
+			Path transitShedule,
+			Path transitVehicles,
+			Path network,
+			Path transitSheduleOutput,
+			Path transitVehiclesOutput,
+			Path networkOutput ) {
 
 		Config config = ConfigUtils.createConfig() ;
 		Scenario scenario = ScenarioUtils.createScenario( config ) ;
 
 		// read in existing files
-		new TransitScheduleReader( scenario ).readFile( TRANSIT_SCHEDULE_PATH.toString() ) ;
-		new VehicleReaderV1( scenario.getTransitVehicles()).readFile( TRANSIT_VEHCILES_PATH.toString() ) ;
-		new MatsimNetworkReader( scenario.getNetwork() ).readFile( NETWORK_PATH.toString() );
+		new TransitScheduleReader( scenario ).readFile( transitShedule.toString() ) ;
+		new VehicleReaderV1( scenario.getTransitVehicles()).readFile( transitVehicles.toString() ) ;
+		new MatsimNetworkReader( scenario.getNetwork() ).readFile( network.toString() );
 
 		// create some transit vehicle type
 		VehicleType type = scenario.getTransitVehicles().getFactory().createVehicleType( Id.create( "airport-express",
@@ -199,9 +191,9 @@ public class CreateSuperTrain {
 		scenario.getTransitSchedule().addTransitLine( line );
 
 		// write out the files
-		new NetworkWriter( scenario.getNetwork()).write( OUTPUT_NETWORK_PATH.toString() );
-		new VehicleWriterV1( scenario.getTransitVehicles()).writeFile( OUTPUT_VEHICLES_PATH.toString() );
-		new TransitScheduleWriter( scenario.getTransitSchedule()).writeFile( OUTPUT_TRANSIT_SCHEDULE_PATH.toString() );
+		new NetworkWriter( scenario.getNetwork()).write( networkOutput.toString() );
+		new VehicleWriterV1( scenario.getTransitVehicles()).writeFile( transitVehiclesOutput.toString() );
+		new TransitScheduleWriter( scenario.getTransitSchedule()).writeFile( transitSheduleOutput.toString() );
 	}
 
 	private Link createLink( String id, Node from, Node to, NetworkFactory factory ) {
