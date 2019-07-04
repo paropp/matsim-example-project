@@ -77,18 +77,13 @@ public class RunBer {
 	
 	public static void main(String[] args) {
 		
-		//TODO: reduce
+		//TODO: reduce (more)
 		String configFileName ;
 		String overridingConfigFileName = null;
 		
-		if ( args.length==0 || args[0].equals("")) {
-			configFileName = CONFIG_FILE_PATH.toString() ;
-			overridingConfigFileName = "overridingConfig.xml";
-
-		} else {
-			configFileName = args[0];
-			if ( args.length>1 ) overridingConfigFileName = args[1];
-		}
+		configFileName = CONFIG_FILE_PATH.toString() ;
+		overridingConfigFileName = "overridingConfig.xml";
+		
 		log.info( "config file: " + configFileName );
 		
 		//////////
