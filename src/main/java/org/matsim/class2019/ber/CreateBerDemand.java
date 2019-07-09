@@ -59,43 +59,44 @@ class CreateBerDemand {
 	CreateBerDemand() {
 		//TODO: pfade übergeben
 
-		Path shapeFolder = Paths.get("/home/misax/Documents/berlin-v5.3-10pct_BER/input/berlin-shp");
+		Path shapeFolder = Paths.get("/home/misax/Documents/berlin-v5.3-10pct_BER/input/berlin-shp") ;
 		
-		Path landcoverFolder = Paths.get("examples/tutorial/population/demandGenerationFromShapefile");
+		Path landcoverFolder = Paths.get("/home/misax/Documents/Uni/Master/Matsim/berlin-v5.3-10pct_BER/landcover/clc10.utm32s.shape/clc10") ;
 
 		//this.interRegionCommuterStatistic = sampleFolder.resolve("commuters-inter-regional.csv");
 
 		// read in the shape file and store the geometries according to their region identifier stored as 'RS' in the
 		// shape file
-		regions = ShapeFileReader.getAllFeatures(shapeFolder.resolve("berlin.shp").toString()).stream()
-				.collect(Collectors.toMap(feature -> (String) feature.getAttribute("RS"), feature -> (Geometry) feature.getDefaultGeometry()));
+		regions = ShapeFileReader.getAllFeatures( shapeFolder.resolve( "berlin.shp" ).toString() ).stream()
+				.collect( Collectors.toMap( feature -> (String) feature.getAttribute("RS"), feature -> (Geometry) feature.getDefaultGeometry()) ) ;
 
 		// Read in landcover data to make people stay in populated areas
 		// we are using a weighted distribution by area-size, so that small areas receive less inhabitants than more
 		// populated ones.
-		List<Pair<Geometry, Double>> weightedGeometries = new ArrayList<>();
-		for (SimpleFeature feature : ShapeFileReader.getAllFeatures(landcoverFolder.resolve("landcover.shp").toString())) {
-			Geometry geometry = (Geometry) feature.getDefaultGeometry();
-			weightedGeometries.add(new Pair<>(geometry, geometry.getArea()));
+		List<Pair<Geometry, Double>> weightedGeometries = new ArrayList<>() ;
+		for ( SimpleFeature feature : ShapeFileReader.getAllFeatures( landcoverFolder.resolve("CLC10.shp").toString() ) ) {
+			Geometry geometry = ( Geometry ) feature.getDefaultGeometry() ;
+			weightedGeometries.add( new Pair<>( geometry, geometry.getArea() ) ) ;
 		}
-		landcover = new EnumeratedDistribution<>(weightedGeometries);
+		landcover = new EnumeratedDistribution<>( weightedGeometries ) ;
 
-		this.population = PopulationUtils.createPopulation(ConfigUtils.createConfig());
+		this.population = PopulationUtils.createPopulation( ConfigUtils.createConfig() ) ;
 	}
 
 	Population getPopulation() {
 		return this.population;
 	}
 
-	void create() {
-		population = PopulationUtils.createPopulation(ConfigUtils.createConfig());
-		createInterRegionCommuters();
+	void create( Path input, Path output ) {
+		population = PopulationUtils.readPopulation(population, filename );
+		population = PopulationUtils.createPopulation( ConfigUtils.createConfig() ) ;
+		createAirportCommuters();
 		logger.info("Done.");
 	}
 
-	private void createInterRegionCommuters() {
+	private void createAirportCommuters() {
 
-		logger.info("Create travelers");
+		logger.info( "Create travelers" );
 		//TODO: beenden
 
 		for (XXX) {

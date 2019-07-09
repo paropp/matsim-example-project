@@ -31,6 +31,7 @@ import org.matsim.analysis.ScoreStats;
 import org.matsim.api.core.v01.Scenario;
 import org.matsim.api.core.v01.TransportMode;
 import org.matsim.api.core.v01.population.Population;
+import org.matsim.codeexamples.population.demandGenerationFromShapefile.CreateDemand;
 import org.matsim.core.config.Config;
 import org.matsim.core.config.ConfigGroup;
 import org.matsim.core.config.ConfigUtils;
@@ -60,6 +61,8 @@ public class RunBer {
 	private boolean hasPreparedConfig = false ;
 	private boolean hasPreparedScenario = false ;
 	private boolean hasPreparedControler = false ;
+	
+	//TODO: change all to downloaded output directory
 
 	private static final Path BASE_PATH						=	Paths.get( "/home/misax/Documents/berlin-v5.3-10pct_BER/" ) ;
 	private static final Path INPUT_PATH					=	BASE_PATH.resolve( "input" ) ;
@@ -70,10 +73,12 @@ public class RunBer {
 	private static final Path TRANSIT_SCHEDULE_PATH			=	INPUT_PATH.resolve( "berlin-v5-transit-schedule.xml.gz" ) ;
 	private static final Path TRANSIT_VEHCILES_PATH			=	INPUT_PATH.resolve( "berlin-v5-transit-vehicles.xml.gz" ) ;
 	private static final Path NETWORK_PATH					=	INPUT_PATH.resolve( "berlin-v5-network.xml.gz" ) ;
+	private static final Path PLANS_PATH					=	INPUT_PATH.resolve( "berlin-v5.3-10pct.plans.xml.gz" ) ;
 
 	private static final Path OUTPUT_NETWORK_PATH			=	OUTPUT_PATH.resolve( "berlin-v5-network.xml.gz" ) ;
 	private static final Path OUTPUT_VEHICLES_PATH			=	OUTPUT_PATH.resolve( "berlin-v5-transit-vehicles.xml.gz") ;
 	private static final Path OUTPUT_TRANSIT_SCHEDULE_PATH	=	OUTPUT_PATH.resolve( "berlin-v5-transit-schedule.xml.gz" ) ;
+	private static final Path OUTPUT_PLANS_PATH				=	OUTPUT_PATH.resolve( "berlin-v5.3-10pct.plans.xml.gz" ) ;
 	
 	public static void main(String[] args) {
 		
@@ -98,7 +103,7 @@ public class RunBer {
 				OUTPUT_NETWORK_PATH
 				);
 		//TODO: pfade übergeben
-		new CreateBerDemand().run();
+		new CreateBerDemand().create( PLANS_PATH, OUTPUT_PLANS_PATH );
 		new RunBer( configFileName, overridingConfigFileName ).run() ;
 	}
 	
