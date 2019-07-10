@@ -45,7 +45,7 @@ class CreateBerDemand {
 	private static final String REGION_KEY = "Schluessel";
 	private static final String HOME_AND_WORK_REGION = "Wohnort gleich Arbeitsort";
 
-	private static final int HOME_END_TIME = 9 * 60 * 60;
+	private  int homeEndTime = 0;
 	private static final int WORK_END_TIME = 17 * 60 * 60;
 	private static final double SCALE_FACTOR = 0.1;
 	private static final GeometryFactory geometryFactory = new GeometryFactory();
@@ -107,7 +107,7 @@ class CreateBerDemand {
 		}
 	}
 
-	private void createPersons(Path arrDepSeats, Geometry geometry, Coordinate AirportCoord, int numberOfPersons) {
+	private void createPersons(Path arrDepSeats, Geometry geometry, Coordinate AirportCoord) {
 
 		// if the person works or lives outside the state we will not use them
 		//if (!regions.containsKey(homeRegionKey) || !regions.containsKey(workRegionKey)) return;
@@ -130,34 +130,41 @@ class CreateBerDemand {
 			
 			for( CSVRecord record : parser ) {
 				sumArrivals +=  Integer.parseInt( record.get( "Arr" ) ) ;
-				sumArrivals +=  Integer.parseInt( record.get( "Dep" ) ) ;
+				sumDepartures +=  Integer.parseInt( record.get( "Dep" ) ) ;
 			}
 
 			// this will iterate over every line in the commuter statistics except the first one which contains the column headers
 			for (CSVRecord record : parser) {
+				
 				if ( record.get( "timeBin" ) != null ) {
-					currentHomeRegion = record.get(HOME_REGION);
-				} else {
-					String workRegion = record.get(WORK_REGION);
-					// we have to use the try parse value method here, because there are some weird values in the 'total'
-					// column which we have to filter out
-					int numberOfCommuters = tryParseValue(record.get(TOTAL));
-					createPersons(currentHomeRegion, workRegion, numberOfCommuters);
-				}
+					
+					String a = record.get("Arr");
+					
+					
+					
+					for ( int i = 0; i < numberOfPersons * SCALE_FACTOR * 0.5; i++ ) {
+						
+						int startHour = Integer.parseInt( record.get( "timeBin" ) ) - 1 ;
+						
+						homeEndTime =  + ;
+
+						Coord home = getCoordInGeometry( geometry ) ;
+						Coord work = getCoordInGeometry( workRegion ) ;
+						String id = "airport_" + homeRegionKey + "_" + workRegionKey + "_" + i ;
+
+						Person person = createPerson( home, work, TransportMode.car, id ) ;
+						population.addPerson( person );
+					}
+					
+				} else {}
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		
-		for ( int i = 0; i < numberOfPersons * SCALE_FACTOR * 0.5; i++ ) {
+		
+		
 
-			Coord home = getCoordInGeometry( geometry ) ;
-			Coord work = getCoordInGeometry( workRegion ) ;
-			String id = homeRegionKey + "_" + workRegionKey + "_" + i ;
-
-			Person person = createPerson( home, work, TransportMode.car, id ) ;
-			population.addPerson( person );
-		}
 	}
 
 	private Person createPerson(Coord home, Coord work, String mode, String id) {

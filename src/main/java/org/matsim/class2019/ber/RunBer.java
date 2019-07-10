@@ -81,6 +81,10 @@ public class RunBer {
 	private static final Path OUTPUT_TRANSIT_SCHEDULE_PATH	=	OUTPUT_PATH.resolve( "berlin-v5-transit-schedule.xml.gz" ) ;
 	private static final Path OUTPUT_PLANS_PATH				=	OUTPUT_PATH.resolve( "berlin-v5.3-10pct.plans.xml.gz" ) ;
 	
+	private final static int NUMBER_OF_TRAVELERS_TOTAL = 1000;
+	
+	
+	
 	public static void main(String[] args) {
 		
 		//TODO: reduce (more)
@@ -103,8 +107,13 @@ public class RunBer {
 				OUTPUT_VEHICLES_PATH,
 				OUTPUT_NETWORK_PATH
 				);
+		
 		//TODO: pfade übergeben
-		new CreateBerDemand().create( PLANS_PATH, OUTPUT_PLANS_PATH, ARR_DEP_SEATS_PATH );
+		new CreateBerDemand().create(
+				PLANS_PATH,
+				OUTPUT_PLANS_PATH,
+				ARR_DEP_SEATS_PATH
+				);
 		new RunBer( configFileName, overridingConfigFileName ).run() ;
 	}
 	
