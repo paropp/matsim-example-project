@@ -70,6 +70,7 @@ public class RunBer {
 	
 	private static final Path CONFIG_FILE_PATH				=	INPUT_PATH.resolve( "berlin-v5.3-10pct.config.xml" ) ;
 	
+	private static final Path ARR_DEP_SEATS_PATH				=	BASE_PATH.resolve( "seats-data.txt" ) ;
 	private static final Path TRANSIT_SCHEDULE_PATH			=	INPUT_PATH.resolve( "berlin-v5-transit-schedule.xml.gz" ) ;
 	private static final Path TRANSIT_VEHCILES_PATH			=	INPUT_PATH.resolve( "berlin-v5-transit-vehicles.xml.gz" ) ;
 	private static final Path NETWORK_PATH					=	INPUT_PATH.resolve( "berlin-v5-network.xml.gz" ) ;
@@ -103,7 +104,7 @@ public class RunBer {
 				OUTPUT_NETWORK_PATH
 				);
 		//TODO: pfade übergeben
-		new CreateBerDemand().create( PLANS_PATH, OUTPUT_PLANS_PATH );
+		new CreateBerDemand().create( PLANS_PATH, OUTPUT_PLANS_PATH, ARR_DEP_SEATS_PATH );
 		new RunBer( configFileName, overridingConfigFileName ).run() ;
 	}
 	

@@ -59,17 +59,15 @@ class CreateBerDemand {
 
 	CreateBerDemand() {
 		//TODO: pfade übergeben
-
-		Path shapeFolder = Paths.get("/home/misax/Documents/berlin-v5.3-10pct_BER/input/berlin-shp") ;
 		
-		Path landcoverFolder = Paths.get("/home/misax/Documents/Uni/Master/Matsim/berlin-v5.3-10pct_BER/landcover/clc10.utm32s.shape/clc10") ;
+		//this.ArrDepStatistic = .resolve("commuters-inter-regional.csv");
 
 		//this.interRegionCommuterStatistic = sampleFolder.resolve("commuters-inter-regional.csv");
 
 		// read in the shape file and store the geometries according to their region identifier stored as 'RS' in the
 		// shape file
-		regions = ShapeFileReader.getAllFeatures( shapeFolder.resolve( "berlin.shp" ).toString() ).stream()
-				.collect( Collectors.toMap( feature -> (String) feature.getAttribute("RS"), feature -> (Geometry) feature.getDefaultGeometry()) ) ;
+		//regions = ShapeFileReader.getAllFeatures( shapeFolder.resolve( "berlin.shp" ).toString() ).stream()
+		//		.collect( Collectors.toMap( feature -> (String) feature.getAttribute("RS"), feature -> (Geometry) feature.getDefaultGeometry()) ) ;
 
 		//create polygon representing berlin for additional demand genration
 		GeometryFactory factory = new GeometryFactory();
@@ -80,51 +78,85 @@ class CreateBerDemand {
 				new Coordinate(4562886.2292778995, 5793245.98195416),
 				new Coordinate(4572280.12883134, 5841054.390968139)
 		});
-
-		this.population = PopulationUtils.createPopulation( ConfigUtils.createConfig() ) ;
+		
+		//create Airport Coodinate at SXF from Node pt_000008010109
+		Coordinate AirportCoord = new Coordinate( 4603139.379672928, 5807465.218550463 ) ;
+		
+		this.population = PopulationUtils.createPopulation( null ) ;
+		//TODO: does this work?
 	}
 
 	Population getPopulation() {
 		return this.population;
 	}
 
-	void create( Path input, Path output ) {
-		//population = PopulationUtils.readPopulation(population, filename );
-		population = PopulationUtils.createPopulation( ConfigUtils.createConfig() ) ;
-		createAirportCommuters();
+	void create( Path plans_input, Path plans_output, Path arrDepSeats) {
+		PopulationUtils.readPopulation( population, plans_input.toString() );
+		createAirportCommuters( arrDepSeats );
 		logger.info("Done.");
 	}
 
-	private void createAirportCommuters() {
+	private void createAirportCommuters( Path arrDepSeats ) {
 
 		logger.info( "Create travelers" );
 		//TODO: beenden
 
 		for (XXX) {
 			
-			createPersons(currentHomeRegion, workRegion, numberOfCommuters);
+			createPersons( arrDepSeats, geometry, AirportCoord, numberOfCommuters );
 		}
 	}
 
-	private void createPersons(String homeRegionKey, String workRegionKey, int numberOfPersons) {
+	private void createPersons(Path arrDepSeats, Geometry geometry, Coordinate AirportCoord, int numberOfPersons) {
 
 		// if the person works or lives outside the state we will not use them
-		if (!regions.containsKey(homeRegionKey) || !regions.containsKey(workRegionKey)) return;
+		//if (!regions.containsKey(homeRegionKey) || !regions.containsKey(workRegionKey)) return;
 
-		logger.info("Home region: " + homeRegionKey + " work region: " + workRegionKey + " number of commuters: " + numberOfPersons);
+		//logger.info("Home region: " + homeRegionKey + " work region: " + workRegionKey + " number of commuters: " + numberOfPersons);
 
-		Geometry homeRegion = regions.get(homeRegionKey);
-		Geometry workRegion = regions.get(workRegionKey);
+		//Geometry homeRegion = regions.get(homeRegionKey);
+		//Geometry workRegion = regions.get(workRegionKey);
 
 		// create as many persons as there are commuters multiplied by the scale factor
-		for (int i = 0; i < numberOfPersons * SCALE_FACTOR; i++) {
+		// how are departing and arriving persons are distributed over the day?
+		// found only CAPA: Berlin Schoenefeld Airport
+		// https://tinyurl.com/y5gtb6z4
+		
+		//to work with relative demand
+		int sumArrivals = 0;
+		int sumDepartures = 0;
+		
+		try (CSVParser parser = CSVParser.parse(arrDepSeats, StandardCharsets.UTF_8, CSVFormat.newFormat('\t').withFirstRecordAsHeader())) {
+			
+			for( CSVRecord record : parser ) {
+				sumArrivals +=  Integer.parseInt( record.get( "Arr" ) ) ;
+				sumArrivals +=  Integer.parseInt( record.get( "Dep" ) ) ;
+			}
 
-			Coord home = getCoordInGeometry(homeRegion);
-			Coord work = getCoordInGeometry(workRegion);
-			String id = homeRegionKey + "_" + workRegionKey + "_" + i;
+			// this will iterate over every line in the commuter statistics except the first one which contains the column headers
+			for (CSVRecord record : parser) {
+				if ( record.get( "timeBin" ) != null ) {
+					currentHomeRegion = record.get(HOME_REGION);
+				} else {
+					String workRegion = record.get(WORK_REGION);
+					// we have to use the try parse value method here, because there are some weird values in the 'total'
+					// column which we have to filter out
+					int numberOfCommuters = tryParseValue(record.get(TOTAL));
+					createPersons(currentHomeRegion, workRegion, numberOfCommuters);
+				}
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		for ( int i = 0; i < numberOfPersons * SCALE_FACTOR * 0.5; i++ ) {
 
-			Person person = createPerson(home, work, TransportMode.car, id);
-			population.addPerson(person);
+			Coord home = getCoordInGeometry( geometry ) ;
+			Coord work = getCoordInGeometry( workRegion ) ;
+			String id = homeRegionKey + "_" + workRegionKey + "_" + i ;
+
+			Person person = createPerson( home, work, TransportMode.car, id ) ;
+			population.addPerson( person );
 		}
 	}
 
@@ -164,32 +196,23 @@ class CreateBerDemand {
 		return plan;
 	}
 
-	private Coord getCoordInGeometry(Geometry regrion) {
+	private Coord getCoordInGeometry(Geometry geometry) {
 
 		double x, y;
 		Point point;
-
 		
-		geometry.getEnvelopeInternal().getMinX()
-		
-		Coord coord = new Coord(1,2);
-		geometry.contains(MGC.coord2Point(coord));
-
-		// select a landcover feature and test whether it is in the right region. If not select a another one.
-		do {
-			selectedLandcover = landcover.sample();
-		} while (!regrion.contains(selectedLandcover));
+		//geometry.contains(MGC.coord2Point(coord));
 
 		// if the landcover feature is in the correct region generate a random coordinate within the bounding box of the
-		// landcover feature. Repeat until a coordinate is found which is actually within the landcover feature.
+		// landcover feature. Repeat until a coordinate is found which is actually within the geometry feature.
 		do {
-			Envelope envelope = selectedLandcover.getEnvelopeInternal();
+			Envelope envelope = geometry.getEnvelopeInternal();
 
 			x = envelope.getMinX() + envelope.getWidth() * random.nextDouble();
 			y = envelope.getMinY() + envelope.getHeight() * random.nextDouble();
 			
 			point = geometryFactory.createPoint(new Coordinate(x, y));
-		} while (point == null || !selectedLandcover.contains(point));
+		} while (point == null || !geometry.contains(point));
 
 		return new Coord(x, y);
 	}
