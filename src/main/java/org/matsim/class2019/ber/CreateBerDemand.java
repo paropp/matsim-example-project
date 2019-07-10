@@ -31,6 +31,7 @@ import org.matsim.api.core.v01.population.Plan;
 import org.matsim.api.core.v01.population.Population;
 import org.matsim.core.config.ConfigUtils;
 import org.matsim.core.population.PopulationUtils;
+import org.matsim.core.utils.geometry.geotools.MGC;
 import org.matsim.core.utils.gis.ShapeFileReader;
 import org.opengis.feature.simple.SimpleFeature;
 
@@ -51,7 +52,7 @@ class CreateBerDemand {
 
 	private final Map<String, Geometry> regions;
 	private final EnumeratedDistribution<Geometry> landcover;
-	private final Path interRegionCommuterStatistic;
+	//private final Path interRegionCommuterStatistic;
 	private final Random random = new Random();
 
 	private Population population;
@@ -70,15 +71,15 @@ class CreateBerDemand {
 		regions = ShapeFileReader.getAllFeatures( shapeFolder.resolve( "berlin.shp" ).toString() ).stream()
 				.collect( Collectors.toMap( feature -> (String) feature.getAttribute("RS"), feature -> (Geometry) feature.getDefaultGeometry()) ) ;
 
-		// Read in landcover data to make people stay in populated areas
-		// we are using a weighted distribution by area-size, so that small areas receive less inhabitants than more
-		// populated ones.
-		List<Pair<Geometry, Double>> weightedGeometries = new ArrayList<>() ;
-		for ( SimpleFeature feature : ShapeFileReader.getAllFeatures( landcoverFolder.resolve("CLC10.shp").toString() ) ) {
-			Geometry geometry = ( Geometry ) feature.getDefaultGeometry() ;
-			weightedGeometries.add( new Pair<>( geometry, geometry.getArea() ) ) ;
-		}
-		landcover = new EnumeratedDistribution<>( weightedGeometries ) ;
+		//create polygon representing berlin for additional demand genration
+		GeometryFactory factory = new GeometryFactory();
+		Geometry  geometry = factory.createPolygon(new Coordinate[] {
+				new Coordinate(4572280.12883134, 5841054.390968139),
+				new Coordinate(4624253.583543593, 5842538.259215522),
+				new Coordinate(4622327.17205539, 5796502.222930692),
+				new Coordinate(4562886.2292778995, 5793245.98195416),
+				new Coordinate(4572280.12883134, 5841054.390968139)
+		});
 
 		this.population = PopulationUtils.createPopulation( ConfigUtils.createConfig() ) ;
 	}
@@ -88,7 +89,7 @@ class CreateBerDemand {
 	}
 
 	void create( Path input, Path output ) {
-		population = PopulationUtils.readPopulation(population, filename );
+		//population = PopulationUtils.readPopulation(population, filename );
 		population = PopulationUtils.createPopulation( ConfigUtils.createConfig() ) ;
 		createAirportCommuters();
 		logger.info("Done.");
@@ -167,7 +168,12 @@ class CreateBerDemand {
 
 		double x, y;
 		Point point;
-		Geometry selectedLandcover;
+
+		
+		geometry.getEnvelopeInternal().getMinX()
+		
+		Coord coord = new Coord(1,2);
+		geometry.contains(MGC.coord2Point(coord));
 
 		// select a landcover feature and test whether it is in the right region. If not select a another one.
 		do {
