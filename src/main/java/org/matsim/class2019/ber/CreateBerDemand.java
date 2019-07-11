@@ -50,8 +50,8 @@ class CreateBerDemand {
 	private static final double SCALE_FACTOR = 0.1;
 	private static final GeometryFactory geometryFactory = new GeometryFactory();
 
-	private final Map<String, Geometry> regions;
-	private final EnumeratedDistribution<Geometry> landcover;
+	//private final Map<String, Geometry> regions;
+	//private final EnumeratedDistribution<Geometry> landcover;
 	//private final Path interRegionCommuterStatistic;
 	private final Random random = new Random();
 
@@ -70,6 +70,7 @@ class CreateBerDemand {
 		//		.collect( Collectors.toMap( feature -> (String) feature.getAttribute("RS"), feature -> (Geometry) feature.getDefaultGeometry()) ) ;
 
 		//create polygon representing berlin for additional demand genration
+		
 		GeometryFactory factory = new GeometryFactory();
 		Geometry  geometry = factory.createPolygon(new Coordinate[] {
 				new Coordinate(4572280.12883134, 5841054.390968139),
@@ -103,7 +104,7 @@ class CreateBerDemand {
 
 		for (XXX) {
 			
-			createPersons( arrDepSeats, geometry, AirportCoord, numberOfCommuters );
+			createPersons( arrDepSeats, geometry, AirportCoord, numberOfTravelers );
 		}
 	}
 
@@ -129,8 +130,8 @@ class CreateBerDemand {
 		try (CSVParser parser = CSVParser.parse(arrDepSeats, StandardCharsets.UTF_8, CSVFormat.newFormat('\t').withFirstRecordAsHeader())) {
 			
 			for( CSVRecord record : parser ) {
-				sumArrivals +=  Integer.parseInt( record.get( "Arr" ) ) ;
-				sumDepartures +=  Integer.parseInt( record.get( "Dep" ) ) ;
+				sumArrivals		+=  Integer.parseInt( record.get( "Arr" ) ) ;
+				sumDepartures	+=  Integer.parseInt( record.get( "Dep" ) ) ;
 			}
 
 			// this will iterate over every line in the commuter statistics except the first one which contains the column headers
@@ -138,15 +139,18 @@ class CreateBerDemand {
 				
 				if ( record.get( "timeBin" ) != null ) {
 					
-					String a = record.get("Arr");
+					int timeBin					= Integer.parseInt( record.get( "timeBin" ) ) - 1;
+					double departuresInPercent	= Integer.parseInt( record.get( "Dep" ) ) / sumDepartures;
+					double arrivalsInPercent	= Integer.parseInt( record.get( "Arr" ) ) / sumArrivals;
 					
+					int departuresInBin			= (int) ( departuresInPercent * RunBer.NUMBER_OF_TRAVELERS_TOTAL * SCALE_FACTOR ) ;
+					int arrivalsInBin			= (int) ( arrivalsInPercent   * RunBer.NUMBER_OF_TRAVELERS_TOTAL * SCALE_FACTOR ) ;
 					
+					if( timeBin == 0 ) timeBin += 24 ;
 					
-					for ( int i = 0; i < numberOfPersons * SCALE_FACTOR * 0.5; i++ ) {
-						
-						int startHour = Integer.parseInt( record.get( "timeBin" ) ) - 1 ;
-						
-						homeEndTime =  + ;
+					for ( int i = 0; i < departuresInBin; i++) {
+
+						double flyDepTime =  timeBin * 60 * 60 ;
 
 						Coord home = getCoordInGeometry( geometry ) ;
 						Coord work = getCoordInGeometry( workRegion ) ;
@@ -161,10 +165,6 @@ class CreateBerDemand {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
-		
-		
-
 	}
 
 	private Person createPerson(Coord home, Coord work, String mode, String id) {
