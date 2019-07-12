@@ -22,6 +22,7 @@ import org.matsim.api.core.v01.population.Leg;
 import org.matsim.api.core.v01.population.Person;
 import org.matsim.api.core.v01.population.Plan;
 import org.matsim.api.core.v01.population.Population;
+import org.matsim.core.config.ConfigUtils;
 import org.matsim.core.population.PopulationUtils;
 
 class CreateBerDemand {
@@ -43,7 +44,7 @@ class CreateBerDemand {
 	//private final EnumeratedDistribution<Geometry> landcover;
 	//private final Path interRegionCommuterStatistic;
 	private final Random random = new Random();
-	private Population population;
+	private Population population ;
 	private Coord AirportCoord ;
 	private Geometry  geometry ;
 
@@ -73,7 +74,7 @@ class CreateBerDemand {
 		//create Airport Coodinate at SXF from Node pt_000008010109
 		this.AirportCoord = new Coord( 4603139.379672928, 5807465.218550463 ) ;
 		
-		//this.population = PopulationUtils.createPopulation( null ) ;
+		this.population = PopulationUtils.createPopulation( ConfigUtils.createConfig() );
 		//TODO: does this work? no
 	}
 
