@@ -3,19 +3,12 @@ package org.matsim.class2019.ber;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 import java.util.Random;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
-import org.apache.commons.math3.distribution.EnumeratedDistribution;
-import org.apache.commons.math3.util.Pair;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
@@ -29,25 +22,20 @@ import org.matsim.api.core.v01.population.Leg;
 import org.matsim.api.core.v01.population.Person;
 import org.matsim.api.core.v01.population.Plan;
 import org.matsim.api.core.v01.population.Population;
-import org.matsim.api.core.v01.population.PopulationWriter;
-import org.matsim.core.config.ConfigUtils;
 import org.matsim.core.population.PopulationUtils;
-import org.matsim.core.utils.geometry.geotools.MGC;
-import org.matsim.core.utils.gis.ShapeFileReader;
-import org.opengis.feature.simple.SimpleFeature;
 
 class CreateBerDemand {
 
 	private static final Logger logger = Logger.getLogger("CreateDemand");
 
-	private static final String HOME_REGION = "Wohnort";
-	private static final String WORK_REGION = "Arbeitsort";
-	private static final String TOTAL = "Insgesamt";
-	private static final String REGION_KEY = "Schluessel";
-	private static final String HOME_AND_WORK_REGION = "Wohnort gleich Arbeitsort";
+	//private static final String HOME_REGION = "Wohnort";
+	//private static final String WORK_REGION = "Arbeitsort";
+	//private static final String TOTAL = "Insgesamt";
+	//private static final String REGION_KEY = "Schluessel";
+	//private static final String HOME_AND_WORK_REGION = "Wohnort gleich Arbeitsort";
 
-	private  int homeEndTime = 0;
-	private static final int WORK_END_TIME = 17 * 60 * 60;
+	//private  int homeEndTime = 0;
+	//private static final int WORK_END_TIME = 17 * 60 * 60;
 	private static final double SCALE_FACTOR = 0.1;
 	private static final GeometryFactory geometryFactory = new GeometryFactory();
 
@@ -115,13 +103,13 @@ class CreateBerDemand {
 		// https://tinyurl.com/y5gtb6z4
 		
 		//to work with relative demand
-		int sumArrivals = 0;
+		//int sumArrivals = 0;
 		int sumDepartures = 0;
 		
 		try (CSVParser parser = CSVParser.parse(arrDepSeats, StandardCharsets.UTF_8, CSVFormat.newFormat('\t').withFirstRecordAsHeader())) {
 			
 			for( CSVRecord record : parser ) {
-				sumArrivals		+=  Integer.parseInt( record.get( "Arr" ) ) ;
+				//sumArrivals		+=  Integer.parseInt( record.get( "Arr" ) ) ;
 				sumDepartures	+=  Integer.parseInt( record.get( "Dep" ) ) ;
 			}
 

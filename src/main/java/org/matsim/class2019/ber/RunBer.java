@@ -23,8 +23,7 @@ import static org.matsim.core.config.groups.ControlerConfigGroup.RoutingAlgorith
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.Map;
+
 
 import org.apache.log4j.Logger;
 import org.matsim.analysis.ScoreStats;
