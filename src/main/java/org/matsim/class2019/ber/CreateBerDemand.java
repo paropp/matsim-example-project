@@ -73,8 +73,8 @@ class CreateBerDemand {
 		//create Airport Coodinate at SXF from Node pt_000008010109
 		this.AirportCoord = new Coord( 4603139.379672928, 5807465.218550463 ) ;
 		
-		this.population = PopulationUtils.createPopulation( null ) ;
-		//TODO: does this work?
+		//this.population = PopulationUtils.createPopulation( null ) ;
+		//TODO: does this work? no
 	}
 
 	Population getPopulation() {
