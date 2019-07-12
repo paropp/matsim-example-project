@@ -31,7 +31,7 @@ import org.matsim.analysis.ScoreStats;
 import org.matsim.api.core.v01.Scenario;
 import org.matsim.api.core.v01.TransportMode;
 import org.matsim.api.core.v01.population.Population;
-import org.matsim.codeexamples.population.demandGenerationFromShapefile.CreateDemand;
+import org.matsim.api.core.v01.population.PopulationWriter;
 import org.matsim.core.config.Config;
 import org.matsim.core.config.ConfigGroup;
 import org.matsim.core.config.ConfigUtils;
@@ -109,12 +109,14 @@ public class RunBer {
 				);
 		
 		//TODO: pfade übergeben
-		new CreateBerDemand().create(
+		CreateBerDemand createBerDemand = new CreateBerDemand();
+		createBerDemand.create(
 				PLANS_PATH,
-				OUTPUT_PLANS_PATH,
 				ARR_DEP_SEATS_PATH
 				);
-		new RunBer( configFileName, overridingConfigFileName ).run() ;
+		Population result = createBerDemand.getPopulation() ;
+		new PopulationWriter( result ).write( OUTPUT_PLANS_PATH.toString() );;
+		//new RunBer( configFileName, overridingConfigFileName ).run() ;
 	}
 	
 	public RunBer( String configFileName, String overridingConfigFileName) {

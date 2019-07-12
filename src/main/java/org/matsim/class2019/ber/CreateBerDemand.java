@@ -29,6 +29,7 @@ import org.matsim.api.core.v01.population.Leg;
 import org.matsim.api.core.v01.population.Person;
 import org.matsim.api.core.v01.population.Plan;
 import org.matsim.api.core.v01.population.Population;
+import org.matsim.api.core.v01.population.PopulationWriter;
 import org.matsim.core.config.ConfigUtils;
 import org.matsim.core.population.PopulationUtils;
 import org.matsim.core.utils.geometry.geotools.MGC;
@@ -54,10 +55,9 @@ class CreateBerDemand {
 	//private final EnumeratedDistribution<Geometry> landcover;
 	//private final Path interRegionCommuterStatistic;
 	private final Random random = new Random();
-
 	private Population population;
-	
-	private Coord AirportCoordinate ;
+	private Coord AirportCoord ;
+	private Geometry  geometry ;
 
 	CreateBerDemand() {
 		//TODO: pfade übergeben
@@ -74,7 +74,7 @@ class CreateBerDemand {
 		//create polygon representing berlin for additional demand genration
 		
 		GeometryFactory factory = new GeometryFactory();
-		Geometry  geometry = factory.createPolygon(new Coordinate[] {
+		this.geometry = factory.createPolygon(new Coordinate[] {
 				new Coordinate(4572280.12883134, 5841054.390968139),
 				new Coordinate(4624253.583543593, 5842538.259215522),
 				new Coordinate(4622327.17205539, 5796502.222930692),
@@ -83,7 +83,7 @@ class CreateBerDemand {
 		});
 		
 		//create Airport Coodinate at SXF from Node pt_000008010109
-		this.AirportCoord = new Coordinate( 4603139.379672928, 5807465.218550463 ) ;
+		this.AirportCoord = new Coord( 4603139.379672928, 5807465.218550463 ) ;
 		
 		this.population = PopulationUtils.createPopulation( null ) ;
 		//TODO: does this work?
@@ -93,21 +93,10 @@ class CreateBerDemand {
 		return this.population;
 	}
 
-	void create( Path plans_input, Path plans_output, Path arrDepSeats) {
+	void create( Path plans_input, Path arrDepSeats) {
 		PopulationUtils.readPopulation( population, plans_input.toString() );
-		createAirportCommuters( arrDepSeats );
+		createPersons( arrDepSeats, geometry, AirportCoord ) ;
 		logger.info("Done.");
-	}
-
-	private void createAirportCommuters( Path arrDepSeats ) {
-
-		logger.info( "Create travelers" );
-		//TODO: beenden
-
-		for (XXX) {
-			
-			createPersons( arrDepSeats, geometry, AirportCoord, numberOfTravelers );
-		}
 	}
 
 	private void createPersons(Path arrDepSeats, Geometry geometry, Coord AirportCoord) {
@@ -143,71 +132,94 @@ class CreateBerDemand {
 					
 					int timeBin					= Integer.parseInt( record.get( "timeBin" ) ) - 1;
 					double departuresInPercent	= Integer.parseInt( record.get( "Dep" ) ) / sumDepartures;
-					double arrivalsInPercent	= Integer.parseInt( record.get( "Arr" ) ) / sumArrivals;
+					//double arrivalsInPercent	= Integer.parseInt( record.get( "Arr" ) ) / sumArrivals;
 					
 					int departuresInBin			= (int) ( departuresInPercent * RunBer.NUMBER_OF_TRAVELERS_TOTAL * SCALE_FACTOR ) ;
-					int arrivalsInBin			= (int) ( arrivalsInPercent   * RunBer.NUMBER_OF_TRAVELERS_TOTAL * SCALE_FACTOR ) ;
+					//int arrivalsInBin			= (int) ( arrivalsInPercent   * RunBer.NUMBER_OF_TRAVELERS_TOTAL * SCALE_FACTOR ) ;
 					
+					//because here there are departures
+					//they have to take place at 25th/ 24th hour to be reachable
 					if( timeBin == 0 ) timeBin += 24 ;
 					
-					for ( int i = 0; i < departuresInBin; i++) {
+					for ( int i = 0; i < departuresInBin; i++ ) {
 						//to smear the travelers over the hour
 						//would be better to know the capacity of an average plane,
-						//to know how many are expected at ones
-						double flyDepTime =  timeBin * 60 * 60  + ( ( ( 60 * 60 ) / departuresInBin ) * i ) ;
-						
+						//to know how many are expected at a specific point in time (possible density of plane take offs)
+						//all departures one hour earlier for check-in
+						//all arrivals take place after one hour, so travelers spend one hour at airport
+						//distribution of arrivals doesnt match real one
+						//could be done by list thats filled with flyArrTime according to arrivalsInBin
+						double flyDepTime = ( timeBin - 1 ) * 60 * 60  + ( ( ( 60 * 60 ) / departuresInBin ) * i ) ;
+						double flyArrTime = flyDepTime + ( 60 * 60 ) ;
 
 						Coord home = getCoordInGeometry( geometry ) ;
-						String id = "airport_dep_" + i ;
+						String id = "airport_" + i + "_dep_" + flyDepTime ;
 
-						Person person = createPerson( home, AirportCoord, TransportMode.car, id ) ;
+						Person person = createPerson( home, AirportCoord, TransportMode.car, id, flyDepTime, flyArrTime ) ;
 						population.addPerson( person );
+						//timeBin 0 -> objects fly over night, go home by day
+						//rest: entsprechend verteilung
+						
+						//penalty hoch in activity
 					}
 					
 				} else {}
 			}
-		} catch (IOException e) {
+		} catch ( IOException e ) {
 			e.printStackTrace();
 		}
 	}
 
-	private Person createPerson(Coord home, Coord work, String mode, String id) {
+	private Person createPerson(
+			Coord home,
+			Coord AirportCoord,
+			String mode,
+			String id,
+			double flyDepTime,
+			double flyArrTime ) {
 
 		// create a person by using the population's factory
 		// The only required argument is an id
-		Person person = population.getFactory().createPerson(Id.createPersonId(id));
-		Plan plan = createPlan(home, work, mode);
-		person.addPlan(plan);
+		Person person = population.getFactory().createPerson( Id.createPersonId( id ) ) ;
+		Plan plan = createPlan( home, AirportCoord, mode, flyDepTime, flyArrTime ) ;
+		person.addPlan( plan ) ;
 		return person;
 	}
 
-	private Plan createPlan(Coord home, Coord work, String mode) {
+	private Plan createPlan(
+			Coord home,
+			Coord AirportCoord,
+			String mode,
+			double flyDepTime,
+			double flyArrTime ) {
 
 		// create a plan for home and work. Note, that activity -> leg -> activity -> leg -> activity have to be inserted in the right
 		// order.
-		Plan plan = population.getFactory().createPlan();
+		Plan plan = population.getFactory().createPlan() ;
 
-		Activity homeActivityInTheMorning = population.getFactory().createActivityFromCoord("home", home);
-		homeActivityInTheMorning.setEndTime(HOME_END_TIME);
-		plan.addActivity(homeActivityInTheMorning);
+		Activity homeActivity = population.getFactory().createActivityFromCoord( "home", home ) ;
+		//homeActivityInTheMorning.setEndTime( HOME_END_TIME );
+		//only fly will get start and end time
+		plan.addActivity( homeActivity ) ;
 
-		Leg toWork = population.getFactory().createLeg(mode);
-		plan.addLeg(toWork);
+		Leg toFly = population.getFactory().createLeg( mode ) ;
+		plan.addLeg( toFly ) ;
 
-		Activity workActivity = population.getFactory().createActivityFromCoord("work", work);
-		workActivity.setEndTime(WORK_END_TIME);
-		plan.addActivity(workActivity);
+		Activity flyActivity = population.getFactory().createActivityFromCoord( "fly", AirportCoord ) ;
+		flyActivity.setStartTime( flyDepTime ) ;
+		flyActivity.setEndTime( flyArrTime ) ;
+		plan.addActivity( flyActivity );
 
-		Leg toHome = population.getFactory().createLeg(mode);
-		plan.addLeg(toHome);
+		Leg toHome = population.getFactory().createLeg( mode );
+		plan.addLeg( toHome );
 
-		Activity homeActivityInTheEvening = population.getFactory().createActivityFromCoord("home", home);
-		plan.addActivity(homeActivityInTheEvening);
+		Activity homeActivityInTheEvening = population.getFactory().createActivityFromCoord( "home", home );
+		plan.addActivity( homeActivityInTheEvening ) ;
 
 		return plan;
 	}
 
-	private Coord getCoordInGeometry(Geometry geometry) {
+	private Coord getCoordInGeometry( Geometry geometry ) {
 
 		double x, y;
 		Point point;
@@ -222,21 +234,10 @@ class CreateBerDemand {
 			x = envelope.getMinX() + envelope.getWidth() * random.nextDouble();
 			y = envelope.getMinY() + envelope.getHeight() * random.nextDouble();
 			
-			point = geometryFactory.createPoint(new Coordinate(x, y));
-		} while (point == null || !geometry.contains(point));
+			point = geometryFactory.createPoint( new Coordinate(x, y) ) ;
+		} while ( point == null || !geometry.contains(point) ) ;
 
 		return new Coord(x, y);
 	}
 
-	private int tryParseValue(String value) {
-
-		// first remove things excel may have put into the value
-		value = value.replace(",", "");
-
-		try {
-			return Integer.parseInt(value);
-		} catch (NumberFormatException e) {
-			return 0;
-		}
-	}
 }
