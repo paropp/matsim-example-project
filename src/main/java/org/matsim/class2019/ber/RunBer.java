@@ -80,7 +80,7 @@ public class RunBer {
 	private static final Path OUTPUT_TRANSIT_SCHEDULE_PATH	=	OUTPUT_PATH.resolve( "berlin-v5-transit-schedule.xml.gz" ) ;
 	private static final Path OUTPUT_PLANS_PATH				=	OUTPUT_PATH.resolve( "berlin-v5.3-10pct.plans.xml.gz" ) ;
 	
-	protected final static int NUMBER_OF_TRAVELERS_TOTAL = 1000;
+	protected final static int NUMBER_OF_TRAVELERS_TOTAL = 90000;
 	
 	
 	
