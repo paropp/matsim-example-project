@@ -56,6 +56,8 @@ class CreateBerDemand {
 	private final Random random = new Random();
 
 	private Population population;
+	
+	private Coord AirportCoordinate ;
 
 	CreateBerDemand() {
 		//TODO: pfade übergeben
@@ -81,7 +83,7 @@ class CreateBerDemand {
 		});
 		
 		//create Airport Coodinate at SXF from Node pt_000008010109
-		Coordinate AirportCoord = new Coordinate( 4603139.379672928, 5807465.218550463 ) ;
+		this.AirportCoord = new Coordinate( 4603139.379672928, 5807465.218550463 ) ;
 		
 		this.population = PopulationUtils.createPopulation( null ) ;
 		//TODO: does this work?
@@ -108,7 +110,7 @@ class CreateBerDemand {
 		}
 	}
 
-	private void createPersons(Path arrDepSeats, Geometry geometry, Coordinate AirportCoord) {
+	private void createPersons(Path arrDepSeats, Geometry geometry, Coord AirportCoord) {
 
 		// if the person works or lives outside the state we will not use them
 		//if (!regions.containsKey(homeRegionKey) || !regions.containsKey(workRegionKey)) return;
@@ -149,14 +151,16 @@ class CreateBerDemand {
 					if( timeBin == 0 ) timeBin += 24 ;
 					
 					for ( int i = 0; i < departuresInBin; i++) {
-
-						double flyDepTime =  timeBin * 60 * 60 ;
+						//to smear the travelers over the hour
+						//would be better to know the capacity of an average plane,
+						//to know how many are expected at ones
+						double flyDepTime =  timeBin * 60 * 60  + ( ( ( 60 * 60 ) / departuresInBin ) * i ) ;
+						
 
 						Coord home = getCoordInGeometry( geometry ) ;
-						Coord work = getCoordInGeometry( workRegion ) ;
-						String id = "airport_" + homeRegionKey + "_" + workRegionKey + "_" + i ;
+						String id = "airport_dep_" + i ;
 
-						Person person = createPerson( home, work, TransportMode.car, id ) ;
+						Person person = createPerson( home, AirportCoord, TransportMode.car, id ) ;
 						population.addPerson( person );
 					}
 					
