@@ -58,7 +58,7 @@ public class CreateSuperTrain {
 				VehicleType.class ) ) ;
 		type.setLength( 150 ) ;
 		VehicleCapacity capacity = scenario.getTransitVehicles().getFactory().createVehicleCapacity() ;
-		capacity.setSeats( 500 ) ;
+		capacity.setSeats( 50 ) ; // so 500 at 100%
 		type.setCapacity( capacity ) ;
 		type.setPcuEquivalents( 0 ) ;
 		scenario.getTransitVehicles().addVehicleType( type ) ;

@@ -63,7 +63,7 @@ public class RunBer {
 	
 	//TODO: change all to downloaded output directory
 
-	private static final Path BASE_PATH						=	Paths.get( "/home/misax/Documents/berlin-v5.3-10pct_BER/" ) ;
+	private static final Path BASE_PATH						=	Paths.get( "/home/misax/Documents/Uni/Master/Matsim/berlin-v5.3-10pct_BER" ) ;
 	private static final Path INPUT_PATH					=	BASE_PATH.resolve( "input" ) ;
 	private static final Path OUTPUT_PATH					=	BASE_PATH.resolve( "edits" ) ;
 	
@@ -73,7 +73,7 @@ public class RunBer {
 	private static final Path TRANSIT_SCHEDULE_PATH			=	INPUT_PATH.resolve( "berlin-v5-transit-schedule.xml.gz" ) ;
 	private static final Path TRANSIT_VEHCILES_PATH			=	INPUT_PATH.resolve( "berlin-v5-transit-vehicles.xml.gz" ) ;
 	private static final Path NETWORK_PATH					=	INPUT_PATH.resolve( "berlin-v5-network.xml.gz" ) ;
-	private static final Path PLANS_PATH					=	INPUT_PATH.resolve( "berlin-v5.3-10pct.plans.xml.gz" ) ;
+	private static final Path PLANS_PATH					=	BASE_PATH.resolve( "output-berlin-v5.3-10pct/berlin-v5.3-10pct.output_plans.xml.gz" ) ;
 
 	private static final Path OUTPUT_NETWORK_PATH			=	OUTPUT_PATH.resolve( "berlin-v5-network.xml.gz" ) ;
 	private static final Path OUTPUT_VEHICLES_PATH			=	OUTPUT_PATH.resolve( "berlin-v5-transit-vehicles.xml.gz") ;
