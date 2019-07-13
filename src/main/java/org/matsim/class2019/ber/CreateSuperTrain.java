@@ -167,15 +167,16 @@ public class CreateSuperTrain {
 		);
 
 		// create departures every 10 minutes from 03:00 to 01:00
-		for ( int i = 0; i < 132; i++ ) {
+		//TODO: RETHINK
+		for ( int i = 0; i < 91; i++ ) {
 			
 			Departure departureTo = scenario.getTransitSchedule().getFactory().createDeparture(
-					Id.create( "departureTo-"+i, Departure.class ), 10800 + i * 600
+					Id.create( "departureTo-"+i, Departure.class ), 10800 + i * 900
 			);
 			departureTo.setVehicleId( vehiclesToSxfList.get( i ).getId() );
 			
 			Departure departureFrom = scenario.getTransitSchedule().getFactory().createDeparture(
-					Id.create( "departureFrom-"+i, Departure.class ), 10800 + i * 600
+					Id.create( "departureFrom-"+i, Departure.class ), 10800 + i * 900
 			);
 			departureFrom.setVehicleId( vehiclesFromSxfList.get( i ).getId() );
 			
