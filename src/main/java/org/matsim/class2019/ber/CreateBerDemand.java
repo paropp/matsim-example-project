@@ -132,8 +132,8 @@ class CreateBerDemand {
 				double departuresInFile		= Integer.parseInt( record.get( "Dep" ) );
 				double departuresInPercent	= departuresInFile / sumDepartures;
 				//double arrivalsInPercent	= Integer.parseInt( record.get( "Arr" ) ) / sumArrivals;
-				
-				double departuresInBin			=  departuresInPercent * RunBer.NUMBER_OF_TRAVELERS_TOTAL * SCALE_FACTOR ;
+				//0.5 - because NUMBER_OF_TRAVELERS_TOTAL
+				double departuresInBin		=  departuresInPercent * RunBer.NUMBER_OF_TRAVELERS_TOTAL * SCALE_FACTOR * 0.5 ;
 				//int arrivalsInBin			= (int) ( arrivalsInPercent   * RunBer.NUMBER_OF_TRAVELERS_TOTAL * SCALE_FACTOR ) ;
 				
 				//because here there are departures

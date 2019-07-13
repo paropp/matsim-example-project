@@ -80,9 +80,9 @@ public class RunBer {
 	private static final Path OUTPUT_TRANSIT_SCHEDULE_PATH	=	OUTPUT_PATH.resolve( "berlin-v5-transit-schedule.xml.gz" ) ;
 	private static final Path OUTPUT_PLANS_PATH				=	OUTPUT_PATH.resolve( "berlin-v5.3-1pct.plans.xml.gz" ) ;
 	
-	protected final static int NUMBER_OF_TRAVELERS_TOTAL = 90000;
-	
-	
+	//2017: 33,312,016 according to (https://www.berlin-airport.de/en/press/publications/company/2018/2017-annual-report.pdf)
+	//taking average per day (33312016 ÷ 365)
+	protected final static int NUMBER_OF_TRAVELERS_TOTAL = 91266;
 	
 	public static void main( String[] args ) {
 		
