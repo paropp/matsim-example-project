@@ -63,22 +63,22 @@ public class RunBer {
 	
 	//TODO: change all to downloaded output directory
 
-	private static final Path BASE_PATH						=	Paths.get( "/home/misax/Documents/Uni/Master/Matsim/berlin-v5.3-10pct_BER" ) ;
+	private static final Path BASE_PATH						=	Paths.get( "/home/misax/Documents/Uni/Master/Matsim/openBerlin-v5.3-1pct_BER" ) ;
 	private static final Path INPUT_PATH					=	BASE_PATH.resolve( "input" ) ;
 	private static final Path OUTPUT_PATH					=	BASE_PATH.resolve( "edits" ) ;
 	
-	private static final Path CONFIG_FILE_PATH				=	INPUT_PATH.resolve( "berlin-v5.3-10pct.config.xml" ) ;
+	private static final Path CONFIG_FILE_PATH				=	INPUT_PATH.resolve( "berlin-v5.3-1pct.config.xml" ) ;
 	
-	private static final Path ARR_DEP_SEATS_PATH			=	BASE_PATH.resolve( "seats-data.txt" ) ;
+	private static final Path ARR_DEP_SEATS_PATH			=	BASE_PATH.resolve( "seats-data.csv" ) ;
 	private static final Path TRANSIT_SCHEDULE_PATH			=	INPUT_PATH.resolve( "berlin-v5-transit-schedule.xml.gz" ) ;
 	private static final Path TRANSIT_VEHCILES_PATH			=	INPUT_PATH.resolve( "berlin-v5-transit-vehicles.xml.gz" ) ;
 	private static final Path NETWORK_PATH					=	INPUT_PATH.resolve( "berlin-v5-network.xml.gz" ) ;
-	private static final Path PLANS_PATH					=	BASE_PATH.resolve( "output-berlin-v5.3-10pct/berlin-v5.3-10pct.output_plans.xml.gz" ) ;
+	private static final Path PLANS_PATH					=	BASE_PATH.resolve( "output-berlin-v5.3-1pct/berlin-v5.3-1pct.output_plans.xml.gz" ) ;
 
 	private static final Path OUTPUT_NETWORK_PATH			=	OUTPUT_PATH.resolve( "berlin-v5-network.xml.gz" ) ;
 	private static final Path OUTPUT_VEHICLES_PATH			=	OUTPUT_PATH.resolve( "berlin-v5-transit-vehicles.xml.gz") ;
 	private static final Path OUTPUT_TRANSIT_SCHEDULE_PATH	=	OUTPUT_PATH.resolve( "berlin-v5-transit-schedule.xml.gz" ) ;
-	private static final Path OUTPUT_PLANS_PATH				=	OUTPUT_PATH.resolve( "berlin-v5.3-10pct.plans.xml.gz" ) ;
+	private static final Path OUTPUT_PLANS_PATH				=	OUTPUT_PATH.resolve( "berlin-v5.3-1pct.plans.xml.gz" ) ;
 	
 	protected final static int NUMBER_OF_TRAVELERS_TOTAL = 90000;
 	
@@ -109,10 +109,7 @@ public class RunBer {
 		
 		//TODO: pfade übergeben
 		CreateBerDemand createBerDemand = new CreateBerDemand();
-		createBerDemand.create(
-				PLANS_PATH,
-				ARR_DEP_SEATS_PATH
-				);
+		createBerDemand.create(	PLANS_PATH,	ARR_DEP_SEATS_PATH );
 		Population result = createBerDemand.getPopulation() ;
 		new PopulationWriter( result ).write( OUTPUT_PLANS_PATH.toString() );;
 		//////////////////////////////////////////////////////////////////////////////////////////////

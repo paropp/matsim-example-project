@@ -37,7 +37,7 @@ class CreateBerDemand {
 
 	//private  int homeEndTime = 0;
 	//private static final int WORK_END_TIME = 17 * 60 * 60;
-	private static final double SCALE_FACTOR = 0.1;
+	private static final double SCALE_FACTOR = 0.01;
 	private static final GeometryFactory geometryFactory = new GeometryFactory();
 
 	//private final Map<String, Geometry> regions;
@@ -83,7 +83,7 @@ class CreateBerDemand {
 	}
 
 	void create( Path plans_input, Path arrDepSeats) {
-		PopulationUtils.readPopulation( population, plans_input.toString() );
+		PopulationUtils.readPopulation( this.population, plans_input.toString() );
 		createPersons( arrDepSeats, geometry, AirportCoord ) ;
 		logger.info("Done.");
 	}
@@ -107,56 +107,83 @@ class CreateBerDemand {
 		//int sumArrivals = 0;
 		int sumDepartures = 0;
 		
-		try (CSVParser parser = CSVParser.parse(arrDepSeats, StandardCharsets.UTF_8, CSVFormat.newFormat('\t').withFirstRecordAsHeader())) {
+		try (CSVParser parser = CSVParser.parse(arrDepSeats, StandardCharsets.UTF_8, CSVFormat.newFormat(';').withFirstRecordAsHeader())) {
+			
+			System.out.println( "entering parser" );
 			
 			for( CSVRecord record : parser ) {
+				
 				//sumArrivals		+=  Integer.parseInt( record.get( "Arr" ) ) ;
 				sumDepartures	+=  Integer.parseInt( record.get( "Dep" ) ) ;
+				System.out.println( sumDepartures );
 			}
 
+		} catch ( IOException e ) {
+			e.printStackTrace();
+		}
+		
+		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		try (CSVParser parser = CSVParser.parse(arrDepSeats, StandardCharsets.UTF_8, CSVFormat.newFormat(';').withFirstRecordAsHeader())) {
+			
 			// this will iterate over every line in the commuter statistics except the first one which contains the column headers
 			for (CSVRecord record : parser) {
 				
-				if ( record.get( "timeBin" ) != null ) {
+				int timeBin					= Integer.parseInt( record.get( "timeBin" ) ) - 1;
+				double departuresInFile		= Integer.parseInt( record.get( "Dep" ) );
+				double departuresInPercent	= departuresInFile / sumDepartures;
+				//double arrivalsInPercent	= Integer.parseInt( record.get( "Arr" ) ) / sumArrivals;
+				
+				double departuresInBin			=  departuresInPercent * RunBer.NUMBER_OF_TRAVELERS_TOTAL * SCALE_FACTOR ;
+				//int arrivalsInBin			= (int) ( arrivalsInPercent   * RunBer.NUMBER_OF_TRAVELERS_TOTAL * SCALE_FACTOR ) ;
+				
+				//because here there are departures
+				//they have to take place at 25th/ 24th hour to be reachable
+				if( timeBin == 0 ) timeBin += 24 ;
+				
+				System.out.println( "timeBin: " + timeBin);
+				System.out.println( "departuresFromFile: " + Integer.parseInt( record.get( "Dep" )));
+				System.out.println( "sumDepartures: " + sumDepartures);
+				System.out.println( "departuresInPercent: " + departuresInPercent);
+				System.out.println( "departuresInBin: " + departuresInBin);
+				System.out.println( "##########################################");
+				
+				for ( int i = 0; i < departuresInBin; i++ ) {
 					
-					int timeBin					= Integer.parseInt( record.get( "timeBin" ) ) - 1;
-					double departuresInPercent	= Integer.parseInt( record.get( "Dep" ) ) / sumDepartures;
-					//double arrivalsInPercent	= Integer.parseInt( record.get( "Arr" ) ) / sumArrivals;
+					System.out.println( "entring create person loop");
 					
-					int departuresInBin			= (int) ( departuresInPercent * RunBer.NUMBER_OF_TRAVELERS_TOTAL * SCALE_FACTOR ) ;
-					//int arrivalsInBin			= (int) ( arrivalsInPercent   * RunBer.NUMBER_OF_TRAVELERS_TOTAL * SCALE_FACTOR ) ;
-					
-					//because here there are departures
-					//they have to take place at 25th/ 24th hour to be reachable
-					if( timeBin == 0 ) timeBin += 24 ;
-					
-					for ( int i = 0; i < departuresInBin; i++ ) {
-						//to smear the travelers over the hour
-						//would be better to know the capacity of an average plane,
-						//to know how many are expected at a specific point in time (possible density of plane take offs)
-						//all departures one hour earlier for check-in
-						//all arrivals take place after one hour, so travelers spend one hour at airport
-						//distribution of arrivals doesnt match real one
-						//could be done by list thats filled with flyArrTime according to arrivalsInBin
-						double flyDepTime = ( timeBin - 1 ) * 60 * 60  + ( ( ( 60 * 60 ) / departuresInBin ) * i ) ;
-						double flyArrTime = flyDepTime + ( 60 * 60 ) ;
+					//to smear the travelers over the hour
+					//would be better to know the capacity of an average plane,
+					//to know how many are expected at a specific point in time (possible density of plane take offs)
+					//all departures one hour earlier for check-in
+					//all arrivals take place after one hour, so travelers spend one hour at airport
+					//distribution of arrivals doesnt match real one
+					//could be done by list thats filled with flyArrTime according to arrivalsInBin
+					double flyDepTime = ( timeBin - 1 ) * 60 * 60  + ( ( ( 60 * 60 ) / departuresInBin ) * i ) ;
+					double flyArrTime = flyDepTime + ( 60 * 60 ) ;
 
-						Coord home = getCoordInGeometry( geometry ) ;
-						String id = "airport_" + i + "_dep_" + flyDepTime ;
+					Coord home = getCoordInGeometry( geometry ) ;
+					String id = "airport_" + i + "_dep_" + flyDepTime ;
 
-						Person person = createPerson( home, AirportCoord, TransportMode.car, id, flyDepTime, flyArrTime ) ;
-						population.addPerson( person );
-						//timeBin 0 -> objects fly over night, go home by day
-						//rest: entsprechend verteilung
-						
-						//penalty hoch in activity
-					}
+					Person person = createPerson( home, AirportCoord, TransportMode.car, id, flyDepTime, flyArrTime ) ;
 					
-				} else {}
+					System.out.println( "before adding person " +i + " to pop" );
+					
+					this.population.addPerson( person );
+					//timeBin 0 -> objects fly over night, go home by day
+					//rest: entsprechend verteilung
+					
+					//penalty hoch in activity
+				}
+				
 			}
 		} catch ( IOException e ) {
 			e.printStackTrace();
 		}
+		////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		
+		
+		
+		
 	}
 
 	private Person createPerson(
@@ -169,8 +196,11 @@ class CreateBerDemand {
 
 		// create a person by using the population's factory
 		// The only required argument is an id
-		Person person = population.getFactory().createPerson( Id.createPersonId( id ) ) ;
+		Person person = this.population.getFactory().createPerson( Id.createPersonId( id ) ) ;
 		Plan plan = createPlan( home, AirportCoord, mode, flyDepTime, flyArrTime ) ;
+		
+		System.out.println( "before adding plan " +id );
+		
 		person.addPlan( plan ) ;
 		return person;
 	}
@@ -184,25 +214,25 @@ class CreateBerDemand {
 
 		// create a plan for home and work. Note, that activity -> leg -> activity -> leg -> activity have to be inserted in the right
 		// order.
-		Plan plan = population.getFactory().createPlan() ;
+		Plan plan = this.population.getFactory().createPlan() ;
 
-		Activity homeActivity = population.getFactory().createActivityFromCoord( "home", home ) ;
+		Activity homeActivity = this.population.getFactory().createActivityFromCoord( "home", home ) ;
 		//homeActivityInTheMorning.setEndTime( HOME_END_TIME );
 		//only fly will get start and end time
 		plan.addActivity( homeActivity ) ;
 
-		Leg toFly = population.getFactory().createLeg( mode ) ;
+		Leg toFly = this.population.getFactory().createLeg( mode ) ;
 		plan.addLeg( toFly ) ;
 
-		Activity flyActivity = population.getFactory().createActivityFromCoord( "fly", AirportCoord ) ;
+		Activity flyActivity = this.population.getFactory().createActivityFromCoord( "fly", AirportCoord ) ;
 		flyActivity.setStartTime( flyDepTime ) ;
 		flyActivity.setEndTime( flyArrTime ) ;
 		plan.addActivity( flyActivity );
 
-		Leg toHome = population.getFactory().createLeg( mode );
+		Leg toHome = this.population.getFactory().createLeg( mode );
 		plan.addLeg( toHome );
 
-		Activity homeActivityInTheEvening = population.getFactory().createActivityFromCoord( "home", home );
+		Activity homeActivityInTheEvening = this.population.getFactory().createActivityFromCoord( "home", home );
 		plan.addActivity( homeActivityInTheEvening ) ;
 
 		return plan;
