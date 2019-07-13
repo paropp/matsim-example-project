@@ -1,5 +1,7 @@
 package org.matsim.class2019.ber;
 
+
+
 /* *********************************************************************** *
  * project: org.matsim.*
  *                                                                         *
@@ -24,7 +26,6 @@ import static org.matsim.core.config.groups.ControlerConfigGroup.RoutingAlgorith
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-
 import org.apache.log4j.Logger;
 import org.matsim.analysis.ScoreStats;
 import org.matsim.api.core.v01.Scenario;
@@ -47,9 +48,9 @@ import ch.sbb.matsim.routing.pt.raptor.SwissRailRaptorModule;
 * @author ikaddoura
 */
 
-public class RunBer {
+public class RunBer2 {
 
-	private static final Logger log = Logger.getLogger(RunBer.class);
+	private static final Logger log = Logger.getLogger(RunBer2.class);
 
 	private final String configFileName;
 	private final String overridingConfigFileName;
@@ -60,7 +61,7 @@ public class RunBer {
 	private boolean hasPreparedConfig = false ;
 	private boolean hasPreparedScenario = false ;
 	private boolean hasPreparedControler = false ;
-
+	
 	private static final Path BASE_PATH						=	Paths.get( "/home/misax/Documents/Uni/Master/Matsim/openBerlin-v5.3-1pct_BER" ) ;
 	private static final Path INPUT_PATH					=	BASE_PATH.resolve( "input" ) ;
 	private static final Path OUTPUT_PATH					=	BASE_PATH.resolve( "edits" ) ;
@@ -82,36 +83,21 @@ public class RunBer {
 	//taking average per day (33312016 ÷ 365)
 	protected final static int NUMBER_OF_TRAVELERS_TOTAL = 91266;
 	
-	public static void main( String[] args ) {
-		
-		//TODO: reduce (more)
-		String configFileName = CONFIG_FILE_PATH.toString() ;
-		String overridingConfigFileName = INPUT_PATH.resolve( "overridingConfig.xml" ).toString() ;
-		
+	public static void main(String[] args) {
+		String configFileName ;
+		String overridingConfigFileName = null;
+		if ( args.length==0 || args[0].equals("")) {
+			configFileName = CONFIG_FILE_PATH.toString() ;
+			overridingConfigFileName = INPUT_PATH.resolve( "overridingConfig.xml" ).toString() ;
+		} else {
+			configFileName = args[0];
+			if ( args.length>1 ) overridingConfigFileName = args[1];
+		}
 		log.info( "config file: " + configFileName );
-		
-		//////////
-		// HERE
-		//////////
-		new CreateSuperTrain().run(
-				TRANSIT_SCHEDULE_PATH,
-				TRANSIT_VEHCILES_PATH,
-				NETWORK_PATH,
-				OUTPUT_TRANSIT_SCHEDULE_PATH,
-				OUTPUT_VEHICLES_PATH,
-				OUTPUT_NETWORK_PATH
-				);
-		
-		CreateBerDemand createBerDemand = new CreateBerDemand();
-		createBerDemand.create(	PLANS_PATH,	ARR_DEP_SEATS_PATH );
-		Population result = createBerDemand.getPopulation() ;
-		new PopulationWriter( result ).write( OUTPUT_PLANS_PATH.toString() );;
-		//////////////////////////////////////////////////////////////////////////////////////////////
-		new RunBer( configFileName, overridingConfigFileName ).run() ;
-		//////////////////////////////////////////////////////////////////////////////////////////////
+		new RunBer2( configFileName, overridingConfigFileName ).run() ;
 	}
 	
-	public RunBer( String configFileName, String overridingConfigFileName) {
+	public RunBer2( String configFileName, String overridingConfigFileName) {
 		this.configFileName = configFileName;
 		this.overridingConfigFileName = overridingConfigFileName;
 	}
@@ -179,7 +165,7 @@ public class RunBer {
 		OutputDirectoryLogging.catchLogEntries();
 		
 		config = ConfigUtils.loadConfig( configFileName, customModules ) ; // I need this to set the context
-
+		
 		config.controler().setRoutingAlgorithmType( FastAStarLandmarks );
 		
 		config.subtourModeChoice().setProbaForRandomSingleTripMode( 0.5 );
@@ -202,7 +188,10 @@ public class RunBer {
 		config.transit().setVehiclesFile( OUTPUT_VEHICLES_PATH.toString() );
 		config.plans().setInputFile(  OUTPUT_PLANS_PATH.toString() );
 		config.controler().setLastIteration( 10 );
-		
+		config.controler().setOutputDirectory( BASE_PATH.resolve( "output" ).toString() );
+		config.controler().setWriteEventsInterval( 5 ) ;
+		config.controler().setWritePlansInterval( 5 ) ;
+
 		// activities:
 		for ( long ii = 600 ; ii <= 97200; ii+=600 ) {
 			final ActivityParams params = new ActivityParams( "home_" + ii + ".0" ) ;
@@ -249,6 +238,19 @@ public class RunBer {
 		if ( !hasPreparedControler ) {
 			prepareControler() ;
 		}
+		
+		new CreateSuperTrain().run(
+				TRANSIT_SCHEDULE_PATH,
+				TRANSIT_VEHCILES_PATH,
+				NETWORK_PATH,
+				OUTPUT_TRANSIT_SCHEDULE_PATH,
+				OUTPUT_VEHICLES_PATH,
+				OUTPUT_NETWORK_PATH
+				);
+		CreateBerDemand createBerDemand = new CreateBerDemand();
+		createBerDemand.create(	PLANS_PATH,	ARR_DEP_SEATS_PATH );
+		Population result = createBerDemand.getPopulation() ;
+		new PopulationWriter( result ).write( OUTPUT_PLANS_PATH.toString() );;
 		controler.run();
 		log.info("Done.");
 	}
@@ -262,5 +264,4 @@ public class RunBer {
 	}
 
 }
-
 
