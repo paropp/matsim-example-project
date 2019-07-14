@@ -122,7 +122,6 @@ class CreateBerDemand {
 			e.printStackTrace();
 		}
 		
-		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		try (CSVParser parser = CSVParser.parse(arrDepSeats, StandardCharsets.UTF_8, CSVFormat.newFormat(';').withFirstRecordAsHeader())) {
 			
 			// this will iterate over every line in the commuter statistics except the first one which contains the column headers
@@ -178,12 +177,7 @@ class CreateBerDemand {
 			}
 		} catch ( IOException e ) {
 			e.printStackTrace();
-		}
-		////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		
-		
-		
-		
+		}		
 	}
 
 	private Person createPerson(
@@ -217,7 +211,7 @@ class CreateBerDemand {
 		Plan plan = this.population.getFactory().createPlan() ;
 
 		Activity homeActivity = this.population.getFactory().createActivityFromCoord( "home", home ) ;
-		//homeActivityInTheMorning.setEndTime( HOME_END_TIME );
+		//homeActivityInTheMorning.setEndTime( HOME_END_TIME ) ;
 		//only fly will get start and end time
 		plan.addActivity( homeActivity ) ;
 
@@ -227,7 +221,7 @@ class CreateBerDemand {
 		Activity flyActivity = this.population.getFactory().createActivityFromCoord( "fly", AirportCoord ) ;
 		flyActivity.setStartTime( flyDepTime ) ;
 		flyActivity.setEndTime( flyArrTime ) ;
-		plan.addActivity( flyActivity );
+		plan.addActivity( flyActivity ) ;
 
 		Leg toHome = this.population.getFactory().createLeg( mode );
 		plan.addLeg( toHome );
