@@ -211,7 +211,7 @@ class CreateBerDemand {
 		Plan plan = this.population.getFactory().createPlan() ;
 
 		Activity homeActivity = this.population.getFactory().createActivityFromCoord( "home", home ) ;
-		//homeActivityInTheMorning.setEndTime( HOME_END_TIME ) ;
+		homeActivity.setEndTime( flyDepTime - (30 * 60) ) ;
 		//only fly will get start and end time
 		plan.addActivity( homeActivity ) ;
 

@@ -198,9 +198,9 @@ public class RunBer {
 		//////////
 		//cause files referenced in config were changed
 		config.network().setInputFile( OUTPUT_NETWORK_PATH.toString() );
-		config.transit().setTransitScheduleFile( OUTPUT_TRANSIT_SCHEDULE_PATH.toString() );
 		config.transit().setVehiclesFile( OUTPUT_VEHICLES_PATH.toString() );
-		//config.plans().setInputFile(  OUTPUT_PLANS_PATH.toString() );
+		//config.transit().setTransitScheduleFile( OUTPUT_TRANSIT_SCHEDULE_PATH.toString() );
+		config.plans().setInputFile( OUTPUT_PLANS_PATH.toString() );
 		config.controler().setOutputDirectory( BASE_PATH.resolve( "output" ).toString() );
 		config.controler().setLastIteration( 0 );
 		//config.controler().setWriteEventsInterval( 5 ) ;
@@ -243,6 +243,14 @@ public class RunBer {
 			params.setTypicalDuration( 12.*3600. );
 			config.planCalcScore().addActivityParams( params );
 		}
+		
+		ActivityParams params = new ActivityParams( "fly" ) ;
+		params.setTypicalDuration( 60 * 60 );
+		config.planCalcScore().addActivityParams( params );
+		
+		params = new ActivityParams( "home" ) ;
+		params.setTypicalDuration( 9 * 60 * 60 );
+		config.planCalcScore().addActivityParams( params );
 		
 		hasPreparedConfig = true ;
 		return config ;
