@@ -40,6 +40,8 @@ import org.matsim.core.controler.AbstractModule;
 import org.matsim.core.controler.Controler;
 import org.matsim.core.controler.OutputDirectoryLogging;
 import org.matsim.core.scenario.ScenarioUtils;
+import org.matsim.pt.transitSchedule.api.TransitSchedule;
+import org.matsim.pt.utils.TransitScheduleValidator;
 
 import ch.sbb.matsim.routing.pt.raptor.SwissRailRaptorModule;
 
@@ -102,10 +104,11 @@ public class RunBer {
 				OUTPUT_NETWORK_PATH
 				);
 		
-		CreateBerDemand createBerDemand = new CreateBerDemand();
-		createBerDemand.create(	PLANS_PATH,	ARR_DEP_SEATS_PATH );
+		CreateBerDemand createBerDemand = new CreateBerDemand() ;
+		createBerDemand.create(	PLANS_PATH,	ARR_DEP_SEATS_PATH ) ;
 		Population result = createBerDemand.getPopulation() ;
-		new PopulationWriter( result ).write( OUTPUT_PLANS_PATH.toString() );;
+		new PopulationWriter( result ).write( OUTPUT_PLANS_PATH.toString() ) ;
+		
 		//////////////////////////////////////////////////////////////////////////////////////////////
 		new RunBer( configFileName, overridingConfigFileName ).run() ;
 		//////////////////////////////////////////////////////////////////////////////////////////////
@@ -171,6 +174,7 @@ public class RunBer {
 		
 		scenario = ScenarioUtils.loadScenario( config );
 
+		
 		hasPreparedScenario = true ;
 		return scenario;
 	}
@@ -199,7 +203,7 @@ public class RunBer {
 		//cause files referenced in config were changed
 		config.network().setInputFile( OUTPUT_NETWORK_PATH.toString() );
 		config.transit().setVehiclesFile( OUTPUT_VEHICLES_PATH.toString() );
-		//config.transit().setTransitScheduleFile( OUTPUT_TRANSIT_SCHEDULE_PATH.toString() );
+		config.transit().setTransitScheduleFile( OUTPUT_TRANSIT_SCHEDULE_PATH.toString() );
 		config.plans().setInputFile( OUTPUT_PLANS_PATH.toString() );
 		config.controler().setOutputDirectory( BASE_PATH.resolve( "output" ).toString() );
 		config.controler().setLastIteration( 0 ); 
@@ -262,6 +266,8 @@ public class RunBer {
 		}
 		controler.run();
 		log.info("Done.");
+		
+		TransitScheduleValidator.validateAll( scenario.getTransitSchedule(), scenario.getNetwork() ) ;
 	}
 	
 	final ScoreStats getScoreStats() {

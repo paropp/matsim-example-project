@@ -72,7 +72,7 @@ class CreateBerDemand {
 		});
 		
 		//create Airport Coodinate at SXF from Node pt_000008010109
-		this.AirportCoord = new Coord( 4603139.379672928, 5807465.218550463 ) ;
+		this.AirportCoord = new Coord( 4603430.97313, 5807236.681163 ) ;
 		
 		this.population = PopulationUtils.createPopulation( ConfigUtils.createConfig() );
 		//TODO: does this work? no
@@ -109,8 +109,6 @@ class CreateBerDemand {
 		
 		try (CSVParser parser = CSVParser.parse(arrDepSeats, StandardCharsets.UTF_8, CSVFormat.newFormat(';').withFirstRecordAsHeader())) {
 			
-			System.out.println( "entering parser" );
-			
 			for( CSVRecord record : parser ) {
 				
 				//sumArrivals		+=  Integer.parseInt( record.get( "Arr" ) ) ;
@@ -121,7 +119,7 @@ class CreateBerDemand {
 		} catch ( IOException e ) {
 			e.printStackTrace();
 		}
-		
+		int numberOfAddedPersons = 0;
 		try (CSVParser parser = CSVParser.parse(arrDepSeats, StandardCharsets.UTF_8, CSVFormat.newFormat(';').withFirstRecordAsHeader())) {
 			
 			// this will iterate over every line in the commuter statistics except the first one which contains the column headers
@@ -148,8 +146,6 @@ class CreateBerDemand {
 				
 				for ( int i = 0; i < departuresInBin; i++ ) {
 					
-					System.out.println( "entring create person loop");
-					
 					//to smear the travelers over the hour
 					//would be better to know the capacity of an average plane,
 					//to know how many are expected at a specific point in time (possible density of plane take offs)
@@ -165,9 +161,10 @@ class CreateBerDemand {
 
 					Person person = createPerson( home, AirportCoord, TransportMode.car, id, flyDepTime, flyArrTime ) ;
 					
-					System.out.println( "before adding person " +i + " to pop" );
-					
 					this.population.addPerson( person );
+					numberOfAddedPersons++;
+					System.out.println( "added Person " + numberOfAddedPersons ) ;
+					
 					//timeBin 0 -> objects fly over night, go home by day
 					//rest: entsprechend verteilung
 					
@@ -192,8 +189,6 @@ class CreateBerDemand {
 		// The only required argument is an id
 		Person person = this.population.getFactory().createPerson( Id.createPersonId( id ) ) ;
 		Plan plan = createPlan( home, AirportCoord, mode, flyDepTime, flyArrTime ) ;
-		
-		System.out.println( "before adding plan " +id );
 		
 		person.addPlan( plan ) ;
 		return person;
