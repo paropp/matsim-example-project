@@ -29,46 +29,23 @@ class CreateBerDemand {
 
 	private static final Logger logger = Logger.getLogger("CreateDemand");
 
-	//private static final String HOME_REGION = "Wohnort";
-	//private static final String WORK_REGION = "Arbeitsort";
-	//private static final String TOTAL = "Insgesamt";
-	//private static final String REGION_KEY = "Schluessel";
-	//private static final String HOME_AND_WORK_REGION = "Wohnort gleich Arbeitsort";
-
-	//private  int homeEndTime = 0;
-	//private static final int WORK_END_TIME = 17 * 60 * 60;
 	private static final double SCALE_FACTOR = 0.01;
 	private static final GeometryFactory geometryFactory = new GeometryFactory();
 
-	//private final Map<String, Geometry> regions;
-	//private final EnumeratedDistribution<Geometry> landcover;
-	//private final Path interRegionCommuterStatistic;
 	private final Random random = new Random();
 	private Population population ;
 	private Coord AirportCoord ;
 	private Geometry  geometry ;
 
 	CreateBerDemand() {
-		//TODO: pfade übergeben
-		
-		//this.ArrDepStatistic = .resolve("commuters-inter-regional.csv");
-
-		//this.interRegionCommuterStatistic = sampleFolder.resolve("commuters-inter-regional.csv");
-
-		// read in the shape file and store the geometries according to their region identifier stored as 'RS' in the
-		// shape file
-		//regions = ShapeFileReader.getAllFeatures( shapeFolder.resolve( "berlin.shp" ).toString() ).stream()
-		//		.collect( Collectors.toMap( feature -> (String) feature.getAttribute("RS"), feature -> (Geometry) feature.getDefaultGeometry()) ) ;
-
-		//create polygon representing berlin for additional demand genration
 		
 		GeometryFactory factory = new GeometryFactory();
 		this.geometry = factory.createPolygon(new Coordinate[] {
-				new Coordinate(4572280.12883134, 5841054.390968139),
-				new Coordinate(4624253.583543593, 5842538.259215522),
-				new Coordinate(4622327.17205539, 5796502.222930692),
-				new Coordinate(4562886.2292778995, 5793245.98195416),
-				new Coordinate(4572280.12883134, 5841054.390968139)
+				new Coordinate(4579118.803517, 5832470.087352),//edit
+				new Coordinate(4579118.803517, 5809355.682157),
+				new Coordinate(4610687.504775, 5809355.682157),
+				new Coordinate(4610687.504775, 5832470.087352),
+				new Coordinate(4579118.803517, 5832470.087352)
 		});
 		
 		//create Airport Coodinate at SXF from Node pt_000008010109
@@ -89,14 +66,6 @@ class CreateBerDemand {
 	}
 
 	private void createPersons(Path arrDepSeats, Geometry geometry, Coord AirportCoord) {
-
-		// if the person works or lives outside the state we will not use them
-		//if (!regions.containsKey(homeRegionKey) || !regions.containsKey(workRegionKey)) return;
-
-		//logger.info("Home region: " + homeRegionKey + " work region: " + workRegionKey + " number of commuters: " + numberOfPersons);
-
-		//Geometry homeRegion = regions.get(homeRegionKey);
-		//Geometry workRegion = regions.get(workRegionKey);
 
 		// create as many persons as there are commuters multiplied by the scale factor
 		// how are departing and arriving persons are distributed over the day?
@@ -119,6 +88,7 @@ class CreateBerDemand {
 		} catch ( IOException e ) {
 			e.printStackTrace();
 		}
+		
 		int numberOfAddedPersons = 0;
 		try (CSVParser parser = CSVParser.parse(arrDepSeats, StandardCharsets.UTF_8, CSVFormat.newFormat(';').withFirstRecordAsHeader())) {
 			
@@ -232,10 +202,6 @@ class CreateBerDemand {
 		double x, y;
 		Point point;
 		
-		//geometry.contains(MGC.coord2Point(coord));
-
-		// if the landcover feature is in the correct region generate a random coordinate within the bounding box of the
-		// landcover feature. Repeat until a coordinate is found which is actually within the geometry feature.
 		do {
 			Envelope envelope = geometry.getEnvelopeInternal();
 

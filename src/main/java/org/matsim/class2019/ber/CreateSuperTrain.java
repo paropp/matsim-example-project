@@ -1,5 +1,7 @@
 package org.matsim.class2019.ber;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -7,6 +9,9 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVRecord;
 import org.matsim.api.core.v01.Id;
 import org.matsim.api.core.v01.Scenario;
 import org.matsim.api.core.v01.TransportMode;
@@ -41,7 +46,8 @@ public class CreateSuperTrain {
 			Path network,
 			Path transitSheduleOutput,
 			Path transitVehiclesOutput,
-			Path networkOutput ) {
+			Path networkOutput,
+			Path trainTiming ) {
 
 		Config config = ConfigUtils.createConfig() ;
 		Scenario scenario = ScenarioUtils.createScenario( config ) ;
@@ -60,10 +66,10 @@ public class CreateSuperTrain {
 		type.setPcuEquivalents( 0 ) ;
 		scenario.getTransitVehicles().addVehicleType( type ) ;
 
-		// create vehicles for service every 10 minutes
+		// create vehicles corresponding to needs, see .csv
 		List<Vehicle> vehiclesToSxfList = new ArrayList<>();
 		List<Vehicle> vehiclesFromSxfList = new ArrayList<>();
-		for ( int i = 0; i < 91; i++ ) {
+		for ( int i = 0; i < 115; i++ ) {
 			
 			Vehicle vehicleTo = scenario.getTransitVehicles().getFactory().createVehicle(
 					Id.createVehicleId( "vehicleToSXF-"+i ), type ) ;
@@ -74,12 +80,11 @@ public class CreateSuperTrain {
 			scenario.getTransitVehicles().addVehicle( vehicleFrom ) ;
 			vehiclesToSxfList.add( vehicleTo ) ;
 			vehiclesFromSxfList.add( vehicleFrom ) ;
-		}
-		
+		}		
 
 		// get the existing nodes we want to connect
-		Node stop0Node	= scenario.getNetwork().getNodes().get( Id.createNodeId( "pt_000008011155" ) ) ; // dummy, because WTF?!
-		Node stop00Node	= scenario.getNetwork().getNodes().get( Id.createNodeId( "pt_000008011154" ) ) ; // dummy, because WTF?!
+		Node stop0Node	= scenario.getNetwork().getNodes().get( Id.createNodeId( "1267954718" ) ) ; // dummy
+		Node stop00Node	= scenario.getNetwork().getNodes().get( Id.createNodeId( "pt_070101007092" ) ) ; // dummy
 		Node nodeHbf	= scenario.getNetwork().getNodes().get( Id.createNodeId( "pt_000008011160" ) ) ; // Hbf
 		Node nodeKreuz	= scenario.getNetwork().getNodes().get( Id.createNodeId( "pt_000008011113" ) ) ; // Südkreuz
 		Node nodeSXF	= scenario.getNetwork().getNodes().get( Id.createNodeId( "pt_000008010109" ) ) ; // SXF
@@ -188,22 +193,76 @@ public class CreateSuperTrain {
 				TransportMode.train
 		);
 
-		// create departures every XX minutes from 03:00 to 01:00
+		// create departures every XX minutes
 		//TODO: RETHINK
-		for ( int i = 0; i < 91; i++ ) {
+		
+		try (CSVParser parser = CSVParser.parse(trainTiming, StandardCharsets.UTF_8, CSVFormat.newFormat(';').withFirstRecordAsHeader())) {
 			
-			Departure departureTo = scenario.getTransitSchedule().getFactory().createDeparture(
-					Id.create( "departureTo-"+i, Departure.class ), 10800 + i * 900
-			);
-			departureTo.setVehicleId( vehiclesToSxfList.get( i ).getId() );
+			//to get the same iterator of vehicles
+			int trainsCreatedForDep = 0 ;
+			int trainsCreatedForArr = 0 ;
 			
-			Departure departureFrom = scenario.getTransitSchedule().getFactory().createDeparture(
-					Id.create( "departureFrom-"+i, Departure.class ), 10800 + i * 900
-			);
-			departureFrom.setVehicleId( vehiclesFromSxfList.get( i ).getId() );
-			
-			transitRouteToSXF.addDeparture( departureTo );
-			transitRouteFromSXF.addDeparture( departureFrom );
+			for( CSVRecord record : parser ) {
+				
+				int timeBin		= Integer.parseInt( record.get( "timeBin" ) ) - 1;
+				int timingDep	= Integer.parseInt( record.get( "timingDep" ) ) ;
+				int timingArr	= Integer.parseInt( record.get( "timingArr" ) ) ;
+				
+				//so they can reach Airport and return home at the end of the day
+				if( timeBin == 0 ) timeBin += 24 ;
+				if( timeBin == 1 ) timeBin += 25 ;
+				
+				boolean hasDep = ( timingDep != 0 ) ;
+				boolean hasArr = ( timingArr != 0 ) ;
+				
+				if( hasDep ) {
+					
+					int numOfTrainsForDep = 60 / timingDep ;
+					
+					if( ( 60 % timingDep != 0 ) ) {
+						System.out.println("Timing results in non usable number of Trains. Mudolo 60 has to be 0.") ;
+						break ;
+					}
+					
+					for( int ii = 1; ii <= numOfTrainsForDep; ii++ ) {
+						
+						Departure departureTo = scenario.getTransitSchedule().getFactory().createDeparture(
+								Id.create( "depToSXF_" + timeBin + "_" + trainsCreatedForDep, Departure.class ),
+								( ( 60 * 60 ) * timeBin ) + ii * ( timingDep * 60 )
+						);
+						departureTo.setVehicleId( vehiclesToSxfList.get( trainsCreatedForDep ).getId() ) ;
+						transitRouteToSXF.addDeparture( departureTo ) ;
+						trainsCreatedForDep++ ;
+					}
+
+				}
+				
+				if( hasArr ) {
+					
+					int numOfTrainsForArr = 60 / timingArr ;
+					
+					if( ( 60 % timingArr != 0 ) ) {
+						System.out.println("Timing results in non usable number of Trains. Mudolo 60 has to be 0.") ;
+						break ;
+					}
+					
+					for( int ii = 1; ii <= numOfTrainsForArr; ii++ ) {
+						
+						Departure departureFrom = scenario.getTransitSchedule().getFactory().createDeparture(
+								Id.create( "depFromSXF_" + timeBin + "_" + trainsCreatedForArr, Departure.class ),
+								( ( 60 * 60 ) * timeBin ) + ii * ( timingArr * 60 )
+						);
+						departureFrom.setVehicleId( vehiclesFromSxfList.get( trainsCreatedForArr ).getId() ) ;
+						transitRouteFromSXF.addDeparture( departureFrom ) ;
+						trainsCreatedForArr++ ;
+					}
+
+				}
+
+			}
+
+		} catch ( IOException e ) {
+			e.printStackTrace();
 		}
 		
 		//add the transit route to our line
