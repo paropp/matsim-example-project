@@ -69,7 +69,7 @@ public class CreateSuperTrain {
 		// create vehicles corresponding to needs, see .csv
 		List<Vehicle> vehiclesToSxfList = new ArrayList<>();
 		List<Vehicle> vehiclesFromSxfList = new ArrayList<>();
-		for ( int i = 0; i < 115; i++ ) {
+		for ( int i = 0; i < 143; i++ ) {
 			
 			Vehicle vehicleTo = scenario.getTransitVehicles().getFactory().createVehicle(
 					Id.createVehicleId( "vehicleToSXF-"+i ), type ) ;
@@ -209,8 +209,7 @@ public class CreateSuperTrain {
 				int timingArr	= Integer.parseInt( record.get( "timingArr" ) ) ;
 				
 				//so they can reach Airport and return home at the end of the day
-				if( timeBin == 0 ) timeBin += 24 ;
-				if( timeBin == 1 ) timeBin += 25 ;
+				if( ( timeBin == 0 ) || ( timeBin == 1 ) ) timeBin += 24 ;
 				
 				boolean hasDep = ( timingDep != 0 ) ;
 				boolean hasArr = ( timingArr != 0 ) ;
@@ -232,6 +231,7 @@ public class CreateSuperTrain {
 						);
 						departureTo.setVehicleId( vehiclesToSxfList.get( trainsCreatedForDep ).getId() ) ;
 						transitRouteToSXF.addDeparture( departureTo ) ;
+						System.out.println(  "Created Train depToSXF_" + timeBin + "_" + trainsCreatedForDep ) ;
 						trainsCreatedForDep++ ;
 					}
 
@@ -254,6 +254,7 @@ public class CreateSuperTrain {
 						);
 						departureFrom.setVehicleId( vehiclesFromSxfList.get( trainsCreatedForArr ).getId() ) ;
 						transitRouteFromSXF.addDeparture( departureFrom ) ;
+						System.out.println(  "Created Train depFromSXF_" + timeBin + "_" + trainsCreatedForArr ) ;
 						trainsCreatedForArr++ ;
 					}
 
