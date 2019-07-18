@@ -159,7 +159,6 @@ class CreateBerDemand {
 		// The only required argument is an id
 		Person person = this.population.getFactory().createPerson( Id.createPersonId( id ) ) ;
 		Plan plan = createPlan( home, AirportCoord, mode, flyDepTime, flyArrTime ) ;
-		
 		person.addPlan( plan ) ;
 		return person;
 	}
@@ -176,8 +175,8 @@ class CreateBerDemand {
 		Plan plan = this.population.getFactory().createPlan() ;
 
 		Activity homeActivity = this.population.getFactory().createActivityFromCoord( "home", home ) ;
+		// let the agents start from home 30 minutes prior to their flight
 		homeActivity.setEndTime( flyDepTime - (30 * 60) ) ;
-		//only fly will get start and end time
 		plan.addActivity( homeActivity ) ;
 
 		Leg toFly = this.population.getFactory().createLeg( mode ) ;
