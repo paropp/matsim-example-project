@@ -224,7 +224,7 @@ public class CreateSuperTrain {
 						break ;
 					}
 					
-					for( int ii = 1; ii <= numOfTrainsForDep; ii++ ) {
+					for( int ii = 0; ii < numOfTrainsForDep; ii++ ) {
 						
 						Departure departureTo = scenario.getTransitSchedule().getFactory().createDeparture(
 								Id.create( "depToSXF_" + timeBin + "_" + trainsCreatedForDep, Departure.class ),
@@ -246,7 +246,7 @@ public class CreateSuperTrain {
 						break ;
 					}
 					
-					for( int ii = 1; ii <= numOfTrainsForArr; ii++ ) {
+					for( int ii = 0; ii < numOfTrainsForArr; ii++ ) {
 						
 						Departure departureFrom = scenario.getTransitSchedule().getFactory().createDeparture(
 								Id.create( "depFromSXF_" + timeBin + "_" + trainsCreatedForArr, Departure.class ),
