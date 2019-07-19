@@ -22,8 +22,12 @@ import org.matsim.api.core.v01.population.Leg;
 import org.matsim.api.core.v01.population.Person;
 import org.matsim.api.core.v01.population.Plan;
 import org.matsim.api.core.v01.population.Population;
+import org.matsim.core.config.Config;
 import org.matsim.core.config.ConfigUtils;
+import org.matsim.core.mobsim.qsim.agents.PopulationAgentSource;
 import org.matsim.core.population.PopulationUtils;
+import org.matsim.utils.objectattributes.attributable.Attributes;
+import org.matsim.utils.objectattributes.attributable.AttributesUtils;
 
 class CreateBerDemand {
 
@@ -41,7 +45,7 @@ class CreateBerDemand {
 		
 		GeometryFactory factory = new GeometryFactory();
 		this.geometry = factory.createPolygon(new Coordinate[] {
-				new Coordinate(4579118.803517, 5832470.087352),//edit
+				new Coordinate(4579118.803517, 5832470.087352),
 				new Coordinate(4579118.803517, 5809355.682157),
 				new Coordinate(4610687.504775, 5809355.682157),
 				new Coordinate(4610687.504775, 5832470.087352),
@@ -52,7 +56,8 @@ class CreateBerDemand {
 		this.AirportCoord = new Coord( 4603430.97313, 5807236.681163 ) ;
 		
 		this.population = PopulationUtils.createPopulation( ConfigUtils.createConfig() );
-		//TODO: does this work? no
+
+		
 	}
 
 	Population getPopulation() {

@@ -43,6 +43,7 @@ import org.matsim.core.controler.OutputDirectoryLogging;
 import org.matsim.core.scenario.ScenarioUtils;
 
 import org.matsim.pt.utils.TransitScheduleValidator;
+import org.matsim.utils.objectattributes.attributable.AttributesUtils;
 
 import ch.sbb.matsim.routing.pt.raptor.SwissRailRaptorModule;
 
@@ -111,6 +112,7 @@ public class RunBer {
 		CreateBerDemand createBerDemand = new CreateBerDemand() ;
 		createBerDemand.create(	PLANS_PATH,	ARR_DEP_SEATS_PATH ) ;
 		Population result = createBerDemand.getPopulation() ;
+		
 		new PopulationWriter( result ).write( OUTPUT_PLANS_PATH.toString() ) ;
 		//new ObjectAttributesXmlWriter(result.getPersonAttributes()).writeFile( OUTPUT_ATTRIBUTES_PATH.toString() ) ;
 		
@@ -251,7 +253,9 @@ public class RunBer {
 			params.setTypicalDuration( 12.*3600. );
 			config.planCalcScore().addActivityParams( params );
 		}
-		///
+		//////////
+		// EDITS
+		//////////
 		{
 			final ActivityParams params = new ActivityParams( "fly" ) ;
 			params.setTypicalDuration( 60 * 60 );
