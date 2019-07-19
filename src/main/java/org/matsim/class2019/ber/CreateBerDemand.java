@@ -112,12 +112,12 @@ class CreateBerDemand {
 				//they have to take place at 25th/ 24th hour to be reachable
 				if( timeBin == 0 ) timeBin += 24 ;
 				
-				System.out.println( "timeBin: " + timeBin);
-				System.out.println( "departuresFromFile: " + Integer.parseInt( record.get( "Dep" )));
-				System.out.println( "sumDepartures: " + sumDepartures);
-				System.out.println( "departuresInPercent: " + departuresInPercent);
-				System.out.println( "departuresInBin: " + departuresInBin);
-				System.out.println( "##########################################");
+//				System.out.println( "timeBin: " + timeBin);
+//				System.out.println( "departuresFromFile: " + Integer.parseInt( record.get( "Dep" )));
+//				System.out.println( "sumDepartures: " + sumDepartures);
+//				System.out.println( "departuresInPercent: " + departuresInPercent);
+//				System.out.println( "departuresInBin: " + departuresInBin);
+//				System.out.println( "##########################################");
 				
 				for ( int i = 0; i < departuresInBin; i++ ) {
 					
@@ -138,7 +138,15 @@ class CreateBerDemand {
 					
 					this.population.addPerson( person ) ;
 					numberOfAddedPersons++ ;
-					System.out.println( "added Person " + numberOfAddedPersons ) ;
+					
+					System.out.println( "##################################") ;
+					System.out.println( "The following print-out has to be added to the person-attributes-xml-file. Dont know another way. Shame on me.") ;
+					System.out.println( "##################################") ;
+					System.out.println( "\t<object id=\"" + id + "\">") ;
+					System.out.println( "\t\t<attribute name=\"subpopulation\" class=\"java.lang.String\">person</attribute>") ;
+					System.out.println( "\t</object>") ;
+
+					//System.out.println( "added Person " + numberOfAddedPersons + ": " + id) ;
 					
 					//timeBin 0 -> objects fly over night, go home by day
 					//rest: entsprechend verteilung

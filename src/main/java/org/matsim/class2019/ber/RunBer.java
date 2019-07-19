@@ -212,9 +212,9 @@ public class RunBer {
 		config.transit().setTransitScheduleFile( OUTPUT_TRANSIT_SCHEDULE_PATH.toString() ) ;
 		config.plans().setInputFile( OUTPUT_PLANS_PATH.toString() ) ;
 		config.controler().setOutputDirectory( BASE_PATH.resolve( "output" ).toString() ) ;
-		config.controler().setLastIteration( 10 ) ; 
-		config.controler().setWriteEventsInterval( 5 ) ;
-		config.controler().setWritePlansInterval( 5 ) ;
+		config.controler().setLastIteration( 300 ) ; 
+		config.controler().setWriteEventsInterval( 100 ) ;
+		config.controler().setWritePlansInterval( 100 ) ;
 		
 		// activities:
 		for ( long ii = 600 ; ii <= 97200; ii+=600 ) {
