@@ -131,8 +131,8 @@ class CreateBerDemand {
 
 					Person person = createPerson( home, AirportCoord, TransportMode.car, id, flyDepTime, flyArrTime ) ;
 					
-					this.population.addPerson( person );
-					numberOfAddedPersons++;
+					this.population.addPerson( person ) ;
+					numberOfAddedPersons++ ;
 					System.out.println( "added Person " + numberOfAddedPersons ) ;
 					
 					//timeBin 0 -> objects fly over night, go home by day
@@ -160,6 +160,10 @@ class CreateBerDemand {
 		Person person = this.population.getFactory().createPerson( Id.createPersonId( id ) ) ;
 		Plan plan = createPlan( home, AirportCoord, mode, flyDepTime, flyArrTime ) ;
 		person.addPlan( plan ) ;
+		
+		//doesnt work
+		person.getAttributes().putAttribute( "subpopulation", "person" ) ;
+		
 		return person;
 	}
 
@@ -177,22 +181,30 @@ class CreateBerDemand {
 		Activity homeActivity = this.population.getFactory().createActivityFromCoord( "home", home ) ;
 		// let the agents start from home 30 minutes prior to their flight
 		homeActivity.setEndTime( flyDepTime - (30 * 60) ) ;
+		homeActivity.getAttributes().putAttribute( "subpopulation", "person" ) ;
 		plan.addActivity( homeActivity ) ;
 
 		Leg toFly = this.population.getFactory().createLeg( mode ) ;
+		toFly.getAttributes().putAttribute( "subpopulation", "person" ) ;
 		plan.addLeg( toFly ) ;
 
 		Activity flyActivity = this.population.getFactory().createActivityFromCoord( "fly", AirportCoord ) ;
 		flyActivity.setStartTime( flyDepTime ) ;
 		flyActivity.setEndTime( flyArrTime ) ;
+		flyActivity.getAttributes().putAttribute( "subpopulation", "person" ) ;
 		plan.addActivity( flyActivity ) ;
 
 		Leg toHome = this.population.getFactory().createLeg( mode );
+		toHome.getAttributes().putAttribute( "subpopulation", "person" ) ;
 		plan.addLeg( toHome );
 
 		Activity homeActivityInTheEvening = this.population.getFactory().createActivityFromCoord( "home", home );
+		homeActivityInTheEvening.getAttributes().putAttribute( "subpopulation", "person" ) ;
 		plan.addActivity( homeActivityInTheEvening ) ;
-
+		
+		//doesnt work
+		plan.getAttributes().putAttribute( "subpopulation", "person" ) ;
+		
 		return plan;
 	}
 

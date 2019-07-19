@@ -1,4 +1,4 @@
-package org.matsim.class2019.ber;
+package org.matsim.class2019.berBeta;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;

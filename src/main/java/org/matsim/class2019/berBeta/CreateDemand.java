@@ -1,4 +1,4 @@
-package org.matsim.class2019.ber;
+package org.matsim.class2019.berBeta;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;

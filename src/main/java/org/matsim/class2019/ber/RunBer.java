@@ -21,6 +21,7 @@ package org.matsim.class2019.ber;
 
 import static org.matsim.core.config.groups.ControlerConfigGroup.RoutingAlgorithmType.FastAStarLandmarks;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -40,7 +41,7 @@ import org.matsim.core.controler.AbstractModule;
 import org.matsim.core.controler.Controler;
 import org.matsim.core.controler.OutputDirectoryLogging;
 import org.matsim.core.scenario.ScenarioUtils;
-import org.matsim.pt.transitSchedule.api.TransitSchedule;
+
 import org.matsim.pt.utils.TransitScheduleValidator;
 
 import ch.sbb.matsim.routing.pt.raptor.SwissRailRaptorModule;
@@ -77,6 +78,7 @@ public class RunBer {
 	private static final Path PLANS_PATH					=	BASE_PATH.resolve( "output-berlin-v5.3-1pct/berlin-v5.3-1pct.output_plans.xml.gz" ) ;
 
 	private static final Path OUTPUT_NETWORK_PATH			=	OUTPUT_PATH.resolve( "berlin-v5-network.xml.gz" ) ;
+//	private static final Path OUTPUT_ATTRIBUTES_PATH		=	OUTPUT_PATH.resolve( "berlin-v5-person-attributes.xml.gz" ) ;
 	private static final Path OUTPUT_VEHICLES_PATH			=	OUTPUT_PATH.resolve( "berlin-v5-transit-vehicles.xml.gz") ;
 	private static final Path OUTPUT_TRANSIT_SCHEDULE_PATH	=	OUTPUT_PATH.resolve( "berlin-v5-transit-schedule.xml.gz" ) ;
 	private static final Path OUTPUT_PLANS_PATH				=	OUTPUT_PATH.resolve( "berlin-v5.3-1pct.plans.xml.gz" ) ;
@@ -85,7 +87,7 @@ public class RunBer {
 	//taking average per day (33312016 ÷ 365)
 	protected final static int NUMBER_OF_TRAVELERS_TOTAL = 91266;
 	
-	public static void main( String[] args ) {
+	public static void main( String[] args ) throws IOException {
 		
 		//TODO: reduce (more)
 		String configFileName = CONFIG_FILE_PATH.toString() ;
@@ -110,6 +112,7 @@ public class RunBer {
 		createBerDemand.create(	PLANS_PATH,	ARR_DEP_SEATS_PATH ) ;
 		Population result = createBerDemand.getPopulation() ;
 		new PopulationWriter( result ).write( OUTPUT_PLANS_PATH.toString() ) ;
+		//new ObjectAttributesXmlWriter(result.getPersonAttributes()).writeFile( OUTPUT_ATTRIBUTES_PATH.toString() ) ;
 		
 		//////////////////////////////////////////////////////////////////////////////////////////////
 		new RunBer( configFileName, overridingConfigFileName ).run() ;
@@ -176,7 +179,6 @@ public class RunBer {
 		
 		scenario = ScenarioUtils.loadScenario( config );
 
-		
 		hasPreparedScenario = true ;
 		return scenario;
 	}
@@ -208,9 +210,9 @@ public class RunBer {
 		config.transit().setTransitScheduleFile( OUTPUT_TRANSIT_SCHEDULE_PATH.toString() ) ;
 		config.plans().setInputFile( OUTPUT_PLANS_PATH.toString() ) ;
 		config.controler().setOutputDirectory( BASE_PATH.resolve( "output" ).toString() ) ;
-		config.controler().setLastIteration( 300 ) ; 
-		config.controler().setWriteEventsInterval( 50 ) ;
-		config.controler().setWritePlansInterval( 50 ) ;
+		config.controler().setLastIteration( 10 ) ; 
+		config.controler().setWriteEventsInterval( 5 ) ;
+		config.controler().setWritePlansInterval( 5 ) ;
 		
 		// activities:
 		for ( long ii = 600 ; ii <= 97200; ii+=600 ) {
@@ -249,14 +251,18 @@ public class RunBer {
 			params.setTypicalDuration( 12.*3600. );
 			config.planCalcScore().addActivityParams( params );
 		}
+		///
+		{
+			final ActivityParams params = new ActivityParams( "fly" ) ;
+			params.setTypicalDuration( 60 * 60 );
+			config.planCalcScore().addActivityParams( params );
+		}
+		{
+			final ActivityParams params = new ActivityParams( "home" ) ;
+			params.setTypicalDuration( 9 * 60 * 60 );
+			config.planCalcScore().addActivityParams( params );
+		}
 		
-		ActivityParams params = new ActivityParams( "fly" ) ;
-		params.setTypicalDuration( 60 * 60 );
-		config.planCalcScore().addActivityParams( params );
-		
-		params = new ActivityParams( "home" ) ;
-		params.setTypicalDuration( 9 * 60 * 60 );
-		config.planCalcScore().addActivityParams( params );
 		
 		hasPreparedConfig = true ;
 		return config ;
