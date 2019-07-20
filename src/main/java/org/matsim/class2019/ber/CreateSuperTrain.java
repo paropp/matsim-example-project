@@ -166,15 +166,19 @@ public class CreateSuperTrain {
 		List<TransitRouteStop> transitStops1 = Arrays.asList(
 				scenario.getTransitSchedule().getFactory().createTransitRouteStop( stop0, 0, 0 ),
 				scenario.getTransitSchedule().getFactory().createTransitRouteStop( stop1, 1, 1 ),
-				scenario.getTransitSchedule().getFactory().createTransitRouteStop( stop2, 120, 120 ),
-				scenario.getTransitSchedule().getFactory().createTransitRouteStop( stop3, 420, 420 )
+				scenario.getTransitSchedule().getFactory().createTransitRouteStop( stop2, 70, 70 ), // ca. 300 km/h
+				scenario.getTransitSchedule().getFactory().createTransitRouteStop( stop3, 250, 250 ) // ca. 300 km/h
+				//scenario.getTransitSchedule().getFactory().createTransitRouteStop( stop2, 120, 120 ), // ca. 160 kmh/
+				//scenario.getTransitSchedule().getFactory().createTransitRouteStop( stop3, 420, 420 ) // ca. 160 kmh/
 		) ;
 		
 		List<TransitRouteStop> transitStops2 = Arrays.asList(
 				scenario.getTransitSchedule().getFactory().createTransitRouteStop( stop00, 0, 0 ),
 				scenario.getTransitSchedule().getFactory().createTransitRouteStop( stop4, 1, 1 ),
-				scenario.getTransitSchedule().getFactory().createTransitRouteStop( stop5, 300, 300 ),
-				scenario.getTransitSchedule().getFactory().createTransitRouteStop( stop6, 420, 420 )
+				scenario.getTransitSchedule().getFactory().createTransitRouteStop( stop5, 180, 180 ), // ca. 300 km/h
+				scenario.getTransitSchedule().getFactory().createTransitRouteStop( stop6, 250, 250 ) // ca. 300 km/h
+				//scenario.getTransitSchedule().getFactory().createTransitRouteStop( stop5, 300, 300 ), // ca. 160 kmh/
+				//scenario.getTransitSchedule().getFactory().createTransitRouteStop( stop6, 420, 420 ) // ca. 160 km/h
 		) ;
 
 		// create a transit route with the previously created transit stops.
@@ -284,7 +288,7 @@ public class CreateSuperTrain {
 		link.setAllowedModes( new HashSet<>( Collections.singletonList( TransportMode.pt ) ) ) ;
 		link.setCapacity( 999999 );
 		link.setLength(NetworkUtils.getEuclideanDistance( link.getFromNode().getCoord(), link.getToNode().getCoord()) ) ;
-		link.setFreespeed( 44.4444444444 ) ; // 83.3333333333
+		link.setFreespeed( 83.3333333333 ) ; // 44.4444444444
 		return link;
 	}
 }
