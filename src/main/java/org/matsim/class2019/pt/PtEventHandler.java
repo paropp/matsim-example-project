@@ -23,7 +23,7 @@ public class PtEventHandler implements TransitDriverStartsEventHandler, PersonLe
     public void handleEvent(TransitDriverStartsEvent transitDriverStartsEvent) {
         transitDrivers.add(transitDriverStartsEvent.getDriverId());
     }
-
+    
     @Override
     public void handleEvent(PersonLeavesVehicleEvent personLeavesVehicleEvent) {
 

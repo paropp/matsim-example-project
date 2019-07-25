@@ -31,7 +31,7 @@ public class PtLegEventHandler implements ActivityEndEventHandler, PersonDepartu
     public void handleEvent( PersonDepartureEvent personDepartureEvent ) {
 
         if ( personsOnRoute.contains( personDepartureEvent.getPersonId() ) ) {
-            personsOnRoute.remove( personDepartureEvent.getPersonId() );
+            personsOnRoute.remove( personDepartureEvent.getPersonId() ) ;
             if ( personDepartureEvent.getLegMode().equals( "access_walk" ) ) {
                 ptTrips++;
             }

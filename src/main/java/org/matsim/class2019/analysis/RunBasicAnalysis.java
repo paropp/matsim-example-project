@@ -56,6 +56,21 @@ public class RunBasicAnalysis {
 			"/home/misax/Documents/Uni/Master/Matsim/openBerlin-v5.3-1pct_reducedLanes_Bundes/output/"
 	};
 	
+	private static String[] pathsBer = new String[] {
+			"/home/misax/Documents/Uni/Master/Matsim/openBerlin-v5.3-1pct_BER/output_policy_160/berlin-v5.3-1pct.output_network.xml.gz" ,
+			"/home/misax/Documents/Uni/Master/Matsim/openBerlin-v5.3-1pct_BER/output_base2/berlin-v5.3-1pct.output_events.xml.gz" ,
+			"/home/misax/Documents/Uni/Master/Matsim/openBerlin-v5.3-1pct_BER/output_policy_160/berlin-v5.3-1pct.output_events.xml.gz" ,
+			"/home/misax/Documents/Uni/Master/Matsim/openBerlin-v5.3-1pct_BER/output/"
+	};
+
+	
+	private static String[] linksBer = new String[] {
+			"kreuz-sxf",
+			"sxf-kreuz",
+			"hbf-kreuz",
+			"kreuz-hbf"
+	} ;
+	
 	private static String[] linksA100 = new String[] {
 			"9999900",
 			"9999901",
@@ -148,8 +163,8 @@ public class RunBasicAnalysis {
 			"62631"
 	};
 			
-	private static String[] paths = pathsA100;
-	private static String[] links2Watch = linksA100;
+	private static String[] paths = pathsBer;
+	private static String[] links2Watch = linksBer;
 	
 	public static void main(String[] args) {
 		RunBasicAnalysis.run( paths, links2Watch ) ;
@@ -279,6 +294,5 @@ public class RunBasicAnalysis {
 		}
 		catch (IOException e ){
 		}
-		
 	}
 }

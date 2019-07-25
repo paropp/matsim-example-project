@@ -288,7 +288,7 @@ public class CreateSuperTrain {
 		link.setAllowedModes( new HashSet<>( Collections.singletonList( TransportMode.pt ) ) ) ;
 		link.setCapacity( 999999 );
 		link.setLength(NetworkUtils.getEuclideanDistance( link.getFromNode().getCoord(), link.getToNode().getCoord()) ) ;
-		link.setFreespeed( 83.3333333333 ) ; // 44.4444444444
+		link.setFreespeed( 0.0000000001 ) ; // 83.3333333333, 44.4444444444
 		return link;
 	}
 }

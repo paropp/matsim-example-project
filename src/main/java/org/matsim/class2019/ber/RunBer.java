@@ -44,6 +44,7 @@ import org.matsim.core.scenario.ScenarioUtils;
 
 import org.matsim.pt.utils.TransitScheduleValidator;
 import org.matsim.utils.objectattributes.attributable.AttributesUtils;
+import org.matsim.utils.objectattributes.attributable.AttributesXmlReaderDelegate;
 
 import ch.sbb.matsim.routing.pt.raptor.SwissRailRaptorModule;
 
@@ -79,7 +80,6 @@ public class RunBer {
 	private static final Path PLANS_PATH					=	BASE_PATH.resolve( "output-berlin-v5.3-1pct/berlin-v5.3-1pct.output_plans.xml.gz" ) ;
 
 	private static final Path OUTPUT_NETWORK_PATH			=	OUTPUT_PATH.resolve( "berlin-v5-network.xml.gz" ) ;
-//	private static final Path OUTPUT_ATTRIBUTES_PATH		=	OUTPUT_PATH.resolve( "berlin-v5-person-attributes.xml.gz" ) ;
 	private static final Path OUTPUT_VEHICLES_PATH			=	OUTPUT_PATH.resolve( "berlin-v5-transit-vehicles.xml.gz") ;
 	private static final Path OUTPUT_TRANSIT_SCHEDULE_PATH	=	OUTPUT_PATH.resolve( "berlin-v5-transit-schedule.xml.gz" ) ;
 	private static final Path OUTPUT_PLANS_PATH				=	OUTPUT_PATH.resolve( "berlin-v5.3-1pct.plans.xml.gz" ) ;
@@ -97,27 +97,26 @@ public class RunBer {
 		log.info( "config file: " + configFileName );
 		
 		//////////
-		// HERE
+		// EDITS
 		//////////
-		new CreateSuperTrain().run(
-				TRANSIT_SCHEDULE_PATH,
-				TRANSIT_VEHCILES_PATH,
-				NETWORK_PATH,
-				OUTPUT_TRANSIT_SCHEDULE_PATH,
-				OUTPUT_VEHICLES_PATH,
-				OUTPUT_NETWORK_PATH,
-				TRAIN_TIMING_PATH
-				);
+//		new CreateSuperTrain().run(
+//				TRANSIT_SCHEDULE_PATH,
+//				TRANSIT_VEHCILES_PATH,
+//				NETWORK_PATH,
+//				OUTPUT_TRANSIT_SCHEDULE_PATH,
+//				OUTPUT_VEHICLES_PATH,
+//				OUTPUT_NETWORK_PATH,
+//				TRAIN_TIMING_PATH
+//				);
 		
 		CreateBerDemand createBerDemand = new CreateBerDemand() ;
 		createBerDemand.create(	PLANS_PATH,	ARR_DEP_SEATS_PATH ) ;
-		Population result = createBerDemand.getPopulation() ;
-		
-		new PopulationWriter( result ).write( OUTPUT_PLANS_PATH.toString() ) ;
-		//new ObjectAttributesXmlWriter(result.getPersonAttributes()).writeFile( OUTPUT_ATTRIBUTES_PATH.toString() ) ;
+//		Population result = createBerDemand.getPopulation() ;
+//		
+//		new PopulationWriter( result ).write( OUTPUT_PLANS_PATH.toString() ) ;
 		
 		//////////////////////////////////////////////////////////////////////////////////////////////
-		new RunBer( configFileName, overridingConfigFileName ).run() ;
+//		new RunBer( configFileName, overridingConfigFileName ).run() ;
 		//////////////////////////////////////////////////////////////////////////////////////////////
 	}
 	
@@ -202,14 +201,18 @@ public class RunBer {
 		config.plansCalcRoute().setInsertingAccessEgressWalk( true );
 		config.qsim().setUsingTravelTimeCheckInTeleportation( true );
 		config.qsim().setTrafficDynamics( TrafficDynamics.kinematicWaves );
-		
+
 		//////////
 		// EDITS
 		//////////
 		//cause files referenced in config were changed
 		config.network().setInputFile( OUTPUT_NETWORK_PATH.toString() ) ;
+		//config.network().setInputFile( NETWORK_PATH.toString() ) ;
 		config.transit().setVehiclesFile( OUTPUT_VEHICLES_PATH.toString() ) ;
+		//config.transit().setVehiclesFile( TRANSIT_VEHCILES_PATH.toString() ) ;
 		config.transit().setTransitScheduleFile( OUTPUT_TRANSIT_SCHEDULE_PATH.toString() ) ;
+		//config.transit().setTransitScheduleFile( TRANSIT_SCHEDULE_PATH.toString() ) ;
+		
 		config.plans().setInputFile( OUTPUT_PLANS_PATH.toString() ) ;
 		config.controler().setOutputDirectory( BASE_PATH.resolve( "output" ).toString() ) ;
 		config.controler().setLastIteration( 300 ) ; 

@@ -97,6 +97,10 @@ class CreateBerDemand {
 		int numberOfAddedPersons = 0;
 		try (CSVParser parser = CSVParser.parse(arrDepSeats, StandardCharsets.UTF_8, CSVFormat.newFormat(';').withFirstRecordAsHeader())) {
 			
+			System.out.println( "##################################") ;
+			System.out.println( "The following print-out has to be added to the person-attributes-xml-file. Dont know another way. Shame on me.") ;
+			System.out.println( "##################################") ;
+			
 			// this will iterate over every line in the commuter statistics except the first one which contains the column headers
 			for (CSVRecord record : parser) {
 				
@@ -119,6 +123,7 @@ class CreateBerDemand {
 //				System.out.println( "departuresInBin: " + departuresInBin);
 //				System.out.println( "##########################################");
 				
+				
 				for ( int i = 0; i < departuresInBin; i++ ) {
 					
 					//to smear the travelers over the hour
@@ -139,9 +144,6 @@ class CreateBerDemand {
 					this.population.addPerson( person ) ;
 					numberOfAddedPersons++ ;
 					
-					System.out.println( "##################################") ;
-					System.out.println( "The following print-out has to be added to the person-attributes-xml-file. Dont know another way. Shame on me.") ;
-					System.out.println( "##################################") ;
 					System.out.println( "\t<object id=\"" + id + "\">") ;
 					System.out.println( "\t\t<attribute name=\"subpopulation\" class=\"java.lang.String\">person</attribute>") ;
 					System.out.println( "\t</object>") ;
@@ -157,7 +159,9 @@ class CreateBerDemand {
 			}
 		} catch ( IOException e ) {
 			e.printStackTrace();
-		}		
+		}
+		
+		System.out.println( "#Person created: " + numberOfAddedPersons++ );
 	}
 
 	private Person createPerson(
