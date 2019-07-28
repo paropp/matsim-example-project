@@ -64,6 +64,12 @@ public class PtEventHandler implements VehicleArrivesAtFacilityEventHandler, Per
 				
 				if( vehiclesOccupancy.containsKey( event.getVehicleId().toString() ) ) {
 					
+					if( vehicleId.toString().contains( "FromSXF" ) ) {
+						
+					} else if ( vehicleId.toString().contains( "ToSXF" ) ) {
+						
+					} else {}
+					
 				} else {
 					vehiclesOccupancy.put( vehicleId.toString() , new VehicleOccupancy( event.getTime() )) ;
 				}
