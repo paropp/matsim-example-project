@@ -7,16 +7,10 @@ import java.nio.file.Paths;
 import java.util.Map.Entry;
 import java.util.logging.Logger;
 
-import org.matsim.api.core.v01.Id;
-import org.matsim.api.core.v01.population.Person;
-import org.matsim.api.core.v01.population.Population;
-import org.matsim.class2019.pt.PtEventHandler;
-import org.matsim.class2019.pt.PtLegEventHandler;
+
 import org.matsim.core.api.experimental.events.EventsManager;
-import org.matsim.core.config.ConfigUtils;
 import org.matsim.core.events.EventsUtils;
 import org.matsim.core.events.MatsimEventsReader;
-import org.matsim.core.population.PopulationUtils;
 import org.matsim.core.utils.io.IOUtils;
 
 public class CalcOccupancy {

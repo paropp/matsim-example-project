@@ -33,7 +33,7 @@ public class PtEventHandler implements VehicleArrivesAtFacilityEventHandler, Veh
 			
 			if( vehiclesOccupancy.containsKey( vehicleId.toString() ) ) {
 				
-				if( vehiclesOccupancy.get( vehicleId.toString() ).getStatus().contains( "enRoute" )) {
+				if( vehiclesOccupancy.get( vehicleId.toString() ).getStatus().contentEquals( "enRoute" )) {
 					vehiclesOccupancy.get( vehicleId.toString() ).setStatus( facilityId.toString() );
 				} else {
 					System.out.println( "should be enRoute. something went wrong. :_|" ) ;
@@ -81,17 +81,17 @@ public class PtEventHandler implements VehicleArrivesAtFacilityEventHandler, Veh
 				
 				if( vehicleId.toString().contains( "ToSXF" ) ) {
 
-					if( vehicleStatus.contains( "airport-express-stop-0" ) ) {
+					if( vehicleStatus.contentEquals( "airport-express-stop-0" ) ) {
 						
 						vehiclesOccupancy.get( vehicleId.toString() ).personsOnFirstTrack.add( personId ) ;
 						vehiclesOccupancy.get( vehicleId.toString() ).personsOnSecondTrack.add( personId ) ;
 						
-					} else if ( vehicleStatus.contains( "airport-express-stop-1" ) ) {
+					} else if ( vehicleStatus.contentEquals( "airport-express-stop-1" ) ) {
 						
 						vehiclesOccupancy.get( vehicleId.toString() ).personsOnFirstTrack.add( personId ) ;
 						vehiclesOccupancy.get( vehicleId.toString() ).personsOnSecondTrack.add( personId ) ;
 						
-					} else if ( vehicleStatus.contains( "airport-express-stop-2" ) ) {
+					} else if ( vehicleStatus.contentEquals( "airport-express-stop-2" ) ) {
 						
 						vehiclesOccupancy.get( vehicleId.toString() ).personsOnSecondTrack.add( personId ) ;
 						
@@ -100,17 +100,17 @@ public class PtEventHandler implements VehicleArrivesAtFacilityEventHandler, Veh
 				} else if ( vehicleId.toString().contains( "FromSXF" ) ) {
 					
 					
-					if( vehicleStatus.contains( "airport-express-stop-00" ) ) {
+					if( vehicleStatus.contentEquals( "airport-express-stop-00" ) ) {
 						
 						vehiclesOccupancy.get( vehicleId.toString() ).personsOnFirstTrack.add( personId ) ;
 						vehiclesOccupancy.get( vehicleId.toString() ).personsOnSecondTrack.add( personId ) ;
 						
-					} else if ( vehicleStatus.contains( "airport-express-stop-4" ) ) {
+					} else if ( vehicleStatus.contentEquals( "airport-express-stop-4" ) ) {
 						
 						vehiclesOccupancy.get( vehicleId.toString() ).personsOnFirstTrack.add( personId ) ;
 						vehiclesOccupancy.get( vehicleId.toString() ).personsOnSecondTrack.add( personId ) ;
 						
-					} else if ( vehicleStatus.contains( "airport-express-stop-5" ) ) {
+					} else if ( vehicleStatus.contentEquals( "airport-express-stop-5" ) ) {
 						
 						vehiclesOccupancy.get( vehicleId.toString() ).personsOnSecondTrack.add( personId ) ;
 						
@@ -140,12 +140,12 @@ public class PtEventHandler implements VehicleArrivesAtFacilityEventHandler, Veh
 
 				if( vehicleId.toString().contains( "ToSXF" ) ) {
 					
-					if( vehicleStatus.contains( "airport-express-stop-1" ) ) {
+					if( vehicleStatus.contentEquals( "airport-express-stop-1" ) ) {
 						
 						vehiclesOccupancy.get( vehicleId.toString() ).personsOnFirstTrack.remove( personId ) ;
 						vehiclesOccupancy.get( vehicleId.toString() ).personsOnSecondTrack.remove( personId ) ;
 						
-					} else if ( vehicleStatus.contains( "airport-express-stop-2" ) ) {
+					} else if ( vehicleStatus.contentEquals( "airport-express-stop-2" ) ) {
 						
 						vehiclesOccupancy.get( vehicleId.toString() ).personsOnSecondTrack.remove( personId ) ;
 						
@@ -153,12 +153,12 @@ public class PtEventHandler implements VehicleArrivesAtFacilityEventHandler, Veh
 					
 				} else if ( vehicleId.toString().contains( "FromSXF" ) ) {
 					
-					if( vehicleStatus.contains( "airport-express-stop-4" ) ) {
+					if( vehicleStatus.contentEquals( "airport-express-stop-4" ) ) {
 						
 						vehiclesOccupancy.get( vehicleId.toString() ).personsOnFirstTrack.remove( personId ) ;
 						vehiclesOccupancy.get( vehicleId.toString() ).personsOnSecondTrack.remove( personId ) ;
 						
-					} else if  ( vehicleStatus.contains( "airport-express-stop-5" ) ) {
+					} else if  ( vehicleStatus.contentEquals( "airport-express-stop-5" ) ) {
 						
 						vehiclesOccupancy.get( vehicleId.toString() ).personsOnSecondTrack.remove( personId ) ;
 						
