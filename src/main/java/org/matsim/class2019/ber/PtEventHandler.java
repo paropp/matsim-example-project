@@ -31,21 +31,17 @@ public class PtEventHandler implements VehicleArrivesAtFacilityEventHandler, Veh
 		
 		if( vehicleId.toString().contains( "SXF" ) ) {
 			
-			if( !facilityId.toString().contains( "airport-express-stop-0" ) ) {
+			if( vehiclesOccupancy.containsKey( vehicleId.toString() ) ) {
 				
-				if( vehiclesOccupancy.containsKey( vehicleId.toString() ) ) {
-					
-					if( vehiclesOccupancy.get( vehicleId.toString() ).getStatus().contains( "enRoute" )) {
-						vehiclesOccupancy.get( vehicleId.toString() ).setStatus( facilityId.toString() );
-					} else {
-						System.out.println( "should be enRoute. something went wrong. :_|" ) ;
-					}
-					
+				if( vehiclesOccupancy.get( vehicleId.toString() ).getStatus().contains( "enRoute" )) {
+					vehiclesOccupancy.get( vehicleId.toString() ).setStatus( facilityId.toString() );
 				} else {
-					vehiclesOccupancy.put( vehicleId.toString() , new VehicleOccupancy( event.getTime(), facilityId.toString() )) ;
+					System.out.println( "should be enRoute. something went wrong. :_|" ) ;
 				}
 				
-			} else {}
+			} else {
+				vehiclesOccupancy.put( vehicleId.toString() , new VehicleOccupancy( event.getTime(), facilityId.toString() )) ;
+			}
 			
 		} else {}
 	}
@@ -58,17 +54,13 @@ public class PtEventHandler implements VehicleArrivesAtFacilityEventHandler, Veh
 		
 		if( vehicleId.toString().contains( "SXF" ) ) {
 			
-			if( !facilityId.toString().contains( "airport-express-stop-0" ) ) {
+			if( vehiclesOccupancy.get( vehicleId.toString() ).getStatus().contains( facilityId.toString() ) ) {
 				
-				if( vehiclesOccupancy.get( vehicleId.toString() ).getStatus().contains( facilityId.toString() ) ) {
-					
-					vehiclesOccupancy.get( vehicleId.toString() ).setStatus( "enRoute" );
-					
-				} else {
-					System.out.println( "Should depart from the same facility it entered. Something went wrong. :_|" );
-				}
+				vehiclesOccupancy.get( vehicleId.toString() ).setStatus( "enRoute" );
 				
-			} else {}
+			} else {
+				System.out.println( "Should depart from the same facility it entered. Something went wrong. :_|" );
+			}
 			
 		} else {}
 		
@@ -81,28 +73,47 @@ public class PtEventHandler implements VehicleArrivesAtFacilityEventHandler, Veh
 		
 		if( vehicleId.toString().contains( "SXF" ) ) {
 			
-			String vehicleStatus = vehiclesOccupancy.get( vehicleId.toString() ).getStatus() ;
-			
 			if( personId.toString().contains( "pt_vehicle" ) ) {
 				// that is the driver
 			} else {
 
+				String vehicleStatus = vehiclesOccupancy.get( vehicleId.toString() ).getStatus() ;
+				
 				if( vehicleId.toString().contains( "ToSXF" ) ) {
-					
-					if( vehicleStatus.contains( "airport-express-stop-1" ) ) {
+
+					if( vehicleStatus.contains( "airport-express-stop-0" ) ) {
+						
 						vehiclesOccupancy.get( vehicleId.toString() ).personsOnFirstTrack.add( personId ) ;
 						vehiclesOccupancy.get( vehicleId.toString() ).personsOnSecondTrack.add( personId ) ;
-					} else if ( vehicleStatus.contains( "airport-express-stop-2" ) ) {
+						
+					} else if ( vehicleStatus.contains( "airport-express-stop-1" ) ) {
+						
+						vehiclesOccupancy.get( vehicleId.toString() ).personsOnFirstTrack.add( personId ) ;
 						vehiclesOccupancy.get( vehicleId.toString() ).personsOnSecondTrack.add( personId ) ;
+						
+					} else if ( vehicleStatus.contains( "airport-express-stop-2" ) ) {
+						
+						vehiclesOccupancy.get( vehicleId.toString() ).personsOnSecondTrack.add( personId ) ;
+						
 					} else {}
 					
 				} else if ( vehicleId.toString().contains( "FromSXF" ) ) {
 					
-					if( vehicleStatus.contains( "airport-express-stop-4" ) ) {
+					
+					if( vehicleStatus.contains( "airport-express-stop-0" ) ) {
+						
 						vehiclesOccupancy.get( vehicleId.toString() ).personsOnFirstTrack.add( personId ) ;
 						vehiclesOccupancy.get( vehicleId.toString() ).personsOnSecondTrack.add( personId ) ;
-					} else if ( vehicleStatus.contains( "airport-express-stop-5" ) ) {
+						
+					} else if ( vehicleStatus.contains( "airport-express-stop-4" ) ) {
+						
+						vehiclesOccupancy.get( vehicleId.toString() ).personsOnFirstTrack.add( personId ) ;
 						vehiclesOccupancy.get( vehicleId.toString() ).personsOnSecondTrack.add( personId ) ;
+						
+					} else if ( vehicleStatus.contains( "airport-express-stop-5" ) ) {
+						
+						vehiclesOccupancy.get( vehicleId.toString() ).personsOnSecondTrack.add( personId ) ;
+						
 					} else {}
 
 				} else {}
@@ -129,7 +140,12 @@ public class PtEventHandler implements VehicleArrivesAtFacilityEventHandler, Veh
 
 				if( vehicleId.toString().contains( "ToSXF" ) ) {
 					
-					if ( vehicleStatus.contains( "airport-express-stop-2" ) ) {
+					if( vehicleStatus.contains( "airport-express-stop-0" ) ) {
+						
+						vehiclesOccupancy.get( vehicleId.toString() ).personsOnFirstTrack.remove( personId ) ;
+						vehiclesOccupancy.get( vehicleId.toString() ).personsOnSecondTrack.remove( personId ) ;
+						
+					} else if ( vehicleStatus.contains( "airport-express-stop-2" ) ) {
 						
 						vehiclesOccupancy.get( vehicleId.toString() ).personsOnSecondTrack.remove( personId ) ;
 						
@@ -137,7 +153,12 @@ public class PtEventHandler implements VehicleArrivesAtFacilityEventHandler, Veh
 					
 				} else if ( vehicleId.toString().contains( "FromSXF" ) ) {
 					
-					if ( vehicleStatus.contains( "airport-express-stop-5" ) ) {
+					if( vehicleStatus.contains( "airport-express-stop-0" ) ) {
+						
+						vehiclesOccupancy.get( vehicleId.toString() ).personsOnFirstTrack.remove( personId ) ;
+						vehiclesOccupancy.get( vehicleId.toString() ).personsOnSecondTrack.remove( personId ) ;
+						
+					} else if  ( vehicleStatus.contains( "airport-express-stop-5" ) ) {
 						
 						vehiclesOccupancy.get( vehicleId.toString() ).personsOnSecondTrack.remove( personId ) ;
 						
