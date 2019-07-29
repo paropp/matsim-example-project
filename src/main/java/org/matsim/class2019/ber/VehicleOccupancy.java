@@ -10,8 +10,8 @@ public class VehicleOccupancy {
 	
 	private double time;
 	private String status;
-	private Set<Id<Person>> personsOnFirstTrack = new HashSet<>();
-	private Set<Id<Person>> personsOnSecondTrack = new HashSet<>();
+	public Set<Id<Person>> personsOnFirstTrack = new HashSet<>();
+	public Set<Id<Person>> personsOnSecondTrack = new HashSet<>();
 	
 	public VehicleOccupancy(double time, String s) {
 		if( time > 0 ) {
@@ -28,6 +28,14 @@ public class VehicleOccupancy {
 	
 	public void setStatus( String s ) {
 		this.status = s ;
+	}
+	
+	public Set<Id<Person>> getPersonsOnFirstTrack() {
+		return this.personsOnFirstTrack ;
+	}
+	
+	public Set<Id<Person>> personsOnSecondTrack() {
+		return this.personsOnFirstTrack ;
 	}
 	
 }

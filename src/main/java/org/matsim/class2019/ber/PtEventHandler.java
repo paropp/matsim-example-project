@@ -109,13 +109,31 @@ public class PtEventHandler implements VehicleArrivesAtFacilityEventHandler, Veh
 	public void handleEvent( PersonEntersVehicleEvent event ) {
 		Id<org.matsim.vehicles.Vehicle> vehicleId = event.getVehicleId() ;
 		Id<Person> personId = event.getPersonId() ;
+		String vehicleStatus = vehiclesOccupancy.get( vehicleId.toString() ).getStatus() ;
 		
 		if( vehicleId.toString().contains( "SXF" ) ) {
 			
 			if( personId.toString().contains( "pt_vehicle" ) ) {
 				// that is the driver
 			} else {
-				
+
+				if( vehicleId.toString().contains( "ToSXF" ) ) {
+					
+					if( vehicleStatus.contains( "airport-express-stop-1" ) ) {
+						vehiclesOccupancy.get( vehicleId.toString() ).personsOnFirstTrack.add( personId ) ;
+					} else if ( vehicleStatus.contains( "airport-express-stop-2" ) ) {
+						vehiclesOccupancy.get( vehicleId.toString() ).personsOnSecondTrack.add( personId ) ;
+					} else {}
+					
+				} else if ( vehicleId.toString().contains( "FromSXF" ) ) {
+					
+					if( vehicleStatus.contains( "airport-express-stop-4" ) ) {
+						vehiclesOccupancy.get( vehicleId.toString() ).personsOnFirstTrack.add( personId ) ;
+					} else if ( vehicleStatus.contains( "airport-express-stop-5" ) ) {
+						vehiclesOccupancy.get( vehicleId.toString() ).personsOnSecondTrack.add( personId ) ;
+					} else {}
+
+				} else {}
 			}
 			
 		} else {}
