@@ -68,12 +68,13 @@ public class PtEventHandler implements VehicleArrivesAtFacilityEventHandler, Veh
 
 	@Override
 	public void handleEvent( PersonEntersVehicleEvent event ) {
+		
 		Id<org.matsim.vehicles.Vehicle> vehicleId = event.getVehicleId() ;
 		Id<Person> personId = event.getPersonId() ;
 		
 		if( vehicleId.toString().contains( "SXF" ) ) {
 			
-			if( personId.toString().contains( "pt_vehicle" ) ) {
+			if( personId.toString().contains( "pt" ) ) {
 				// that is the driver
 			} else {
 
@@ -134,7 +135,7 @@ public class PtEventHandler implements VehicleArrivesAtFacilityEventHandler, Veh
 			
 			String vehicleStatus = vehiclesOccupancy.get( vehicleId.toString() ).getStatus() ;
 			
-			if( personId.toString().contains( "pt_vehicle" ) ) {
+			if( personId.toString().contains( "pt" ) ) {
 				// that is the driver
 			} else {
 
