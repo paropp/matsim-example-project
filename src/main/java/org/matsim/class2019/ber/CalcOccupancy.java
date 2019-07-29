@@ -40,7 +40,7 @@ public class CalcOccupancy {
 
 		BufferedWriter bwOccupancy = IOUtils.getBufferedWriter( occupancyPath.toString() );
 		try {
-			bwOccupancy.write( "vehicle,time,OccupancyOnFirstTrack,OccupancyOnSecondTrack" );
+			bwOccupancy.write( "vehicle,time,OccupancyOnFirstTrack,OccupancyOnSecondTrack," );
 			bwOccupancy.newLine();
 			
 			for (Entry<String, VehicleOccupancy> vehicle : handler.getOccupancy().entrySet()){
@@ -48,7 +48,7 @@ public class CalcOccupancy {
 				String key = vehicle.getKey() ;
 				VehicleOccupancy value = vehicle.getValue() ;
 				
-				bwOccupancy.write( key + "," + value.getTime() + "," + value.personsOnFirstTrack.size() + "," + value.personsOnSecondTrack.size());
+				bwOccupancy.write( key + "," + value.getTime() + "," + value.personsOnFirstTrack.size() + "," + value.personsOnSecondTrack.size() + ",");
 				bwOccupancy.newLine();
 			}
 			bwOccupancy.flush();

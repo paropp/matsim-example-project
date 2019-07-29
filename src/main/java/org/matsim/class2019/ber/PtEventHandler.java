@@ -100,7 +100,7 @@ public class PtEventHandler implements VehicleArrivesAtFacilityEventHandler, Veh
 				} else if ( vehicleId.toString().contains( "FromSXF" ) ) {
 					
 					
-					if( vehicleStatus.contains( "airport-express-stop-0" ) ) {
+					if( vehicleStatus.contains( "airport-express-stop-00" ) ) {
 						
 						vehiclesOccupancy.get( vehicleId.toString() ).personsOnFirstTrack.add( personId ) ;
 						vehiclesOccupancy.get( vehicleId.toString() ).personsOnSecondTrack.add( personId ) ;
@@ -140,7 +140,7 @@ public class PtEventHandler implements VehicleArrivesAtFacilityEventHandler, Veh
 
 				if( vehicleId.toString().contains( "ToSXF" ) ) {
 					
-					if( vehicleStatus.contains( "airport-express-stop-0" ) ) {
+					if( vehicleStatus.contains( "airport-express-stop-1" ) ) {
 						
 						vehiclesOccupancy.get( vehicleId.toString() ).personsOnFirstTrack.remove( personId ) ;
 						vehiclesOccupancy.get( vehicleId.toString() ).personsOnSecondTrack.remove( personId ) ;
@@ -153,7 +153,7 @@ public class PtEventHandler implements VehicleArrivesAtFacilityEventHandler, Veh
 					
 				} else if ( vehicleId.toString().contains( "FromSXF" ) ) {
 					
-					if( vehicleStatus.contains( "airport-express-stop-0" ) ) {
+					if( vehicleStatus.contains( "airport-express-stop-4" ) ) {
 						
 						vehiclesOccupancy.get( vehicleId.toString() ).personsOnFirstTrack.remove( personId ) ;
 						vehiclesOccupancy.get( vehicleId.toString() ).personsOnSecondTrack.remove( personId ) ;
