@@ -4,9 +4,11 @@ import org.matsim.api.core.v01.Id;
 import org.matsim.api.core.v01.events.ActivityEndEvent;
 import org.matsim.api.core.v01.events.PersonDepartureEvent;
 import org.matsim.api.core.v01.events.PersonEntersVehicleEvent;
+import org.matsim.api.core.v01.events.PersonLeavesVehicleEvent;
 import org.matsim.api.core.v01.events.handler.ActivityEndEventHandler;
 import org.matsim.api.core.v01.events.handler.PersonDepartureEventHandler;
 import org.matsim.api.core.v01.events.handler.PersonEntersVehicleEventHandler;
+import org.matsim.api.core.v01.events.handler.PersonLeavesVehicleEventHandler;
 import org.matsim.api.core.v01.population.Person;
 import org.matsim.class2019.basics.Rectangle;
 import org.matsim.core.api.experimental.events.VehicleArrivesAtFacilityEvent;
@@ -21,7 +23,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public class PtEventHandler implements VehicleArrivesAtFacilityEventHandler, PersonEntersVehicleEventHandler, VehicleDepartsAtFacilityEventHandler {
+public class PtEventHandler implements VehicleArrivesAtFacilityEventHandler, VehicleDepartsAtFacilityEventHandler, PersonEntersVehicleEventHandler, PersonLeavesVehicleEventHandler {
 
     private Map<String, VehicleOccupancy> vehiclesOccupancy = new HashMap<>();
 
@@ -105,6 +107,24 @@ public class PtEventHandler implements VehicleArrivesAtFacilityEventHandler, Per
 
 	@Override
 	public void handleEvent( PersonEntersVehicleEvent event ) {
+		Id<org.matsim.vehicles.Vehicle> vehicleId = event.getVehicleId() ;
+		Id<Person> personId = event.getPersonId() ;
+		
+		if( vehicleId.toString().contains( "SXF" ) ) {
+			
+			if( personId.toString().contains( "pt_vehicle" ) ) {
+				// that is the driver
+			} else {
+				
+			}
+			
+		} else {}
+		
+		
+	}
+
+	@Override
+	public void handleEvent(PersonLeavesVehicleEvent event) {
 		// TODO Auto-generated method stub
 		
 	}
