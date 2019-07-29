@@ -62,16 +62,16 @@ public class PtEventHandler implements VehicleArrivesAtFacilityEventHandler, Per
 			
 			if( !facilityId.toString().contains( "airport-express-stop-0" ) ) {
 				
-				if( vehiclesOccupancy.containsKey( event.getVehicleId().toString() ) ) {
+				if( vehiclesOccupancy.containsKey( vehicleId.toString() ) ) {
 					
-					if( vehicleId.toString().contains( "FromSXF" ) ) {
-						
-					} else if ( vehicleId.toString().contains( "ToSXF" ) ) {
-						
-					} else {}
+					if( vehiclesOccupancy.get( vehicleId.toString() ).getStatus().contains( "enRoute" )) {
+						vehiclesOccupancy.get( vehicleId.toString() ).setStatus( facilityId.toString() );
+					} else {
+						System.out.println( "should be enRoute. something went wrong. :_|" ) ;
+					}
 					
 				} else {
-					vehiclesOccupancy.put( vehicleId.toString() , new VehicleOccupancy( event.getTime() )) ;
+					vehiclesOccupancy.put( vehicleId.toString() , new VehicleOccupancy( event.getTime(), facilityId.toString() )) ;
 				}
 				
 			} else {}
@@ -81,12 +81,30 @@ public class PtEventHandler implements VehicleArrivesAtFacilityEventHandler, Per
     
 	@Override
 	public void handleEvent(VehicleDepartsAtFacilityEvent event) {
-		// TODO Auto-generated method stub
+		
+		Id<org.matsim.vehicles.Vehicle> vehicleId = event.getVehicleId() ;
+		Id<TransitStopFacility> facilityId = event.getFacilityId() ;
+		
+		if( vehicleId.toString().contains( "SXF" ) ) {
+			
+			if( !facilityId.toString().contains( "airport-express-stop-0" ) ) {
+				
+				if( vehiclesOccupancy.get( vehicleId.toString() ).getStatus().contains( facilityId.toString() ) ) {
+					
+					vehiclesOccupancy.get( vehicleId.toString() ).setStatus( "enRoute" );
+					
+				} else {
+					System.out.println( "Should depart from the same facility it entered. Something went wrong. :_|" );
+				}
+				
+			} else {}
+			
+		} else {}
 		
 	}
 
 	@Override
-	public void handleEvent(PersonEntersVehicleEvent event) {
+	public void handleEvent( PersonEntersVehicleEvent event ) {
 		// TODO Auto-generated method stub
 		
 	}

@@ -9,15 +9,25 @@ import org.matsim.api.core.v01.population.Person;
 public class VehicleOccupancy {
 	
 	private double time;
+	private String status;
 	private Set<Id<Person>> personsOnFirstTrack = new HashSet<>();
 	private Set<Id<Person>> personsOnSecondTrack = new HashSet<>();
 	
-	public VehicleOccupancy(double time) {
-		if(time > 0) {
-			this.time = time;
+	public VehicleOccupancy(double time, String s) {
+		if( time > 0 ) {
+			this.time = time ;
+			this.status = s ;
 		} else {
-			System.out.println("time has to be positive");
+			System.out.println("time has to be positive") ;
 		}
+	}
+	
+	public String getStatus() {
+		return this.status ;
+	}
+	
+	public void setStatus( String s ) {
+		this.status = s ;
 	}
 	
 }
